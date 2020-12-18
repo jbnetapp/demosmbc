@@ -1,4 +1,13 @@
 ==================================================================================
+DT
+==================================================================================
+- Test Aggr DATA
+- Test sshpass commande
+- script 1: Add test for data aggr 
+- script 1: Add test for Mediator Port runing and Certificate CA
+- Test File /etc/iscsi/initiatorname.iscsi 
+- Change Sleep 5 to 2
+==================================================================================
 Prepare VM Linux to be iSCSI Ready
 ===================================================================================
 # [root@centos1 data]# yum install sshpass -y
