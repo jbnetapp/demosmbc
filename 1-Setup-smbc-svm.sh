@@ -11,6 +11,13 @@ fi
 
 . $CONFIG_FILE
 
+clean_and_exit(){
+        echo $0
+        exit
+}
+
+
+# Main
 echo Init SSH session host 
 SSH_Name=`cat $HOME/.ssh/known_hosts  | awk -F',' -v cluster_name=cluster1 '{if ( $1 == cluster_name ) print $1}'`
 [ -z $SSH_Name ] &&  ssh -l admin cluster1 exit
@@ -31,7 +38,8 @@ sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver clust
 
 (sleep 1; echo $PASSWD ; sleep 5; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster1 cluster peer create -address-family ipv4 -peer-addrs 192.168.0.117
 (sleep 1; echo $PASSWD ; sleep 5; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster2 cluster peer create -address-family ipv4 -peer-addrs 192.168.0.115
-
+cpr=`sshpass -p $PASSWD ssh -l admin cluster2 cluster peer show -fields Availability | grep cluster1`
+[ -z "$cpr" ] && clean_and_exit "Error Unable to create cluster peer from cluster2"
 sshpass -p $PASSWD ssh -l admin cluster1 cluster peer show 
 sshpass -p $PASSWD ssh -l admin cluster2 cluster peer show 
 
@@ -104,4 +112,4 @@ sshpass -p $PASSWD ssh -l admin cluster1 igroup create -igroup centos01 -protoco
 sshpass -p $PASSWD ssh -l admin cluster2 igroup create -igroup centos01 -protocol mixed -ostype linux -initiator $INITIATOR_NAME -vserver $SVM_S
 
 sshpass -p $PASSWD ssh -l admin cluster1 lun map -vserver $SVM_P -path /vol/${VOL_NAME_P}/${LUN_NAME} -igroup centos01
-sshpass -p $PASSWD ssh -l admin cluster2 lun map -vserver $SVM_S -path /vol/${VOL_NAME_S}/${LUN_NAME} -igroup centos02
+sshpass -p $PASSWD ssh -l admin cluster2 lun map -vserver $SVM_S -path /vol/${VOL_NAME_S}/${LUN_NAME} -igroup centos01
