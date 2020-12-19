@@ -41,7 +41,7 @@ if [ "$cps" != "ok" ]; then
 	(sleep 1; echo $PASSWD ; sleep 2; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster2 cluster peer create -address-family ipv4 -peer-addrs 192.168.0.115
 	sleep 10
 	cps=`sshpass -p $PASSWD ssh -l admin cluster1 cluster peer show |grep cluster2 | awk '{print $4}'|tr -d '\r'`
-	[ "$cpr" != "ok" ] && clean_and_exit "Error Unable to create cluster peer from cluster2" 255
+	[ "$cps" != "ok" ] && clean_and_exit "Error Unable to create cluster peer from cluster2" 255
 fi
 sshpass -p $PASSWD ssh -l admin cluster1 cluster peer show 
 sshpass -p $PASSWD ssh -l admin cluster2 cluster peer show 
