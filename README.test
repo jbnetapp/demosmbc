@@ -1,6 +1,8 @@
 ==================================================================================
 DT
 ==================================================================================
+- add tr -d '\r' on any ssh
+E Cluster Peer create bug 
 - Test Aggr DATA
 - Test sshpass commande
 - script 1: Add test for data aggr 
@@ -8,6 +10,7 @@ DT
 - Test File /etc/iscsi/initiatorname.iscsi 
 - Change Sleep 5 to 2
 - Add SCript install Mediator Package with passwd
+
 ==================================================================================
 Prepare VM Linux to be iSCSI Ready
 ===================================================================================
