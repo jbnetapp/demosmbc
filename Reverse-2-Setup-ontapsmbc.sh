@@ -1,4 +1,6 @@
 #!/bin/bash
+# v01
+#
 set -x
 #TMPFILE=/tmp/file.$$
 #PASSWD='Netapp1!'

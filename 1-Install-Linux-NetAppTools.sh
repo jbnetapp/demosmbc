@@ -1,6 +1,8 @@
 #!/bin/bash
-# echo Discover LUN
+#
+# Install Mediator and Host utilities kit
 # v01
+#
 set -x
 
 DIRNAME=`dirname $0`
@@ -15,10 +17,4 @@ fi
 . $CONFIG_FILE
 . $FUNCTIONS_FILE
 
-clean_and_exit "Terminate" 255
-exit 
-
-/usr/bin/rescan-scsi-bus.sh
-multipath -ll
-sanlun lun show -p
-
+clean_and_exit "Terminate" 0

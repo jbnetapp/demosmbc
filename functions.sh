@@ -1,5 +1,6 @@
 #
 # Bash Functions
+# v01
 #
 clean_and_exit(){
         echo $1

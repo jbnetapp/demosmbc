@@ -1,5 +1,4 @@
 #!/bin/bash
-# echo Discover LUN
 # v01
 set -x
 
@@ -15,10 +14,10 @@ fi
 . $CONFIG_FILE
 . $FUNCTIONS_FILE
 
-clean_and_exit "Terminate" 255
-exit 
 
-/usr/bin/rescan-scsi-bus.sh
-multipath -ll
+# Unmape Linux Lun Drives
 sanlun lun show -p
-
+#echo "1" > /sys/block/sdm/device/delete
+systemctl stop multipathd.service
+systemctl start multipathd.service
+/usr/bin/rescan-scsi-bus.sh
