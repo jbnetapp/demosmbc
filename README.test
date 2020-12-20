@@ -3,6 +3,7 @@ DT
 ==================================================================================
 - add tr -d '\r' on any ssh
 E Cluster Peer create bug 
+- Add VAR For IP
 - Test Aggr DATA
 - Test sshpass commande
 - script 1: Add test for data aggr 

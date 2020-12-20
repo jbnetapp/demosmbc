@@ -55,7 +55,7 @@ sleep 10
 med=`sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster1 |grep $MEDIATOR_IP`
 [ ! -z "$med" ] && clean_and_exit "Error Unable to delete mediator" 255
 
-CERT=`sshpass -p $PASSWD ssh -l admin cluster1 security certificate show  -cert-name ONTAPMediatorCA -field serial,ca,type | grep ONTAPMediatorCA`
+CERT=`sshpass -p $PASSWD ssh -l admin cluster1 security certificate show  -cert-name ONTAPMediatorCA -field serial,ca,type | grep ONTAPMediatorCA |tr -d '\r'`
 CERT_VSERVER=`echo $CERT |awk '{print $1}'`
 CERT_SERIAL=`echo $CERT |awk '{print $3}'`
 CERT_TYPE=`echo $CERT |awk -F'"' '{print $3}'| awk '{print $1}'`
@@ -64,7 +64,7 @@ cert=`sshpass -p $PASSWD ssh -l admin cluster1 security certificate show -common
 [ ! -z "$cert" ] && clean_and_exit "Error Unable to delete certificate $CERT_SERIAL" 255
 
 
-CERT=`sshpass -p $PASSWD ssh -l admin cluster2 security certificate show  -cert-name ONTAPMediatorCA -field serial,ca,type | grep ONTAPMediatorCA`
+CERT=`sshpass -p $PASSWD ssh -l admin cluster2 security certificate show  -cert-name ONTAPMediatorCA -field serial,ca,type | grep ONTAPMediatorCA |tr -d '\r'`
 CERT_VSERVER=`echo $CERT |awk '{print $1}'`
 CERT_SERIAL=`echo $CERT |awk '{print $3}'`
 CERT_TYPE=`echo $CERT |awk -F'"' '{print $3}'| awk '{print $1}'`
