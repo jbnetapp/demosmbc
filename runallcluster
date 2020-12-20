@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+DIRNAME=`dirname $0`
+CONFIG_FILE=${DIRNAME}/Setup.conf
+FUNCTIONS_FILE=${DIRNAME}/functions.sh
+
+if [ ! -f $CONFIG_FILE ] ; then
+        echo "ERROR: Unable to read $CONFIG_FILE"
+        exit 1
+fi
+
+. $CONFIG_FILE
+. $FUNCTIONS_FILE
+
+echo Init SSH session host
+check_ssh_keyhost cluster1
+check_ssh_keyhost cluster2
+
+which sshpass
+[ $? -ne 0 ] && clean_and_exit "Error sshpass not available: Please install the pacakge"  255
+
+echo =========================================================================================
+echo "cluster1 > $@"
+sshpass -p $PASSWD ssh -l admin cluster1 $@ 
+echo =========================================================================================
+echo "cluster2 > $@"
+sshpass -p $PASSWD ssh -l admin cluster2 $@
