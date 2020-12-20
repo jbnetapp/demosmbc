@@ -1,7 +1,6 @@
 #!/bin/bash
-# v01
-set -x
 
+VERSION=0.2
 DIRNAME=`dirname $0`
 CONFIG_FILE=${DIRNAME}/Setup.conf
 FUNCTIONS_FILE=${DIRNAME}/functions.sh
@@ -14,18 +13,9 @@ fi
 . $CONFIG_FILE
 . $FUNCTIONS_FILE
 
+check_var
+
 set -x
-
-DIRNAME=`dirname $0`
-CONFIG_FILE=${DIRNAME}/Setup.conf
-
-if [ ! -f $CONFIG_FILE ] ; then
-        echo "ERROR: Unable to read $CONFIG_FILE"
-        exit 1
-fi
-
-. $CONFIG_FILE
-
 yum update -y
 yum install tuned -y
 yum install grubby -y
@@ -57,8 +47,14 @@ echo "Uptate kernel grub"
 KERNEL=`uname -r`
 KERNEL_FILE=`echo /boot/vmlinuz-${KERNEL}` 
 if [ -f $KERNEL_FILE ] ; then
-	echo "grubby --args "rdloaddriver=scsi_dh_alua" --update-kernel $KERNEL_FILE"
-	grubby --args "rdloaddriver=scsi_dh_alua" --update-kernel $KERNEL_FILE
+	set +x
+	gettext "Run: [grubby --args "rdloaddriver=scsi_dh_alua" --update-kernel $KERNEL_FILE] [y/n]? : "
+	read input 
+	if [ "$input" == "y" ] ; then
+		grubby --args "rdloaddriver=scsi_dh_alua" --update-kernel $KERNEL_FILE
+		echo "Please Reboot Linux and run following command after reboot"
+		echo "# cat /proc/cmdline "
+		echo "And check if you sse the variable rdloaddriver=scsi_dh_alua in the kernel" 
+	fi
 fi
-
 clean_and_exit "terminate" 0

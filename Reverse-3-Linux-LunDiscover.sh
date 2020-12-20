@@ -1,7 +1,8 @@
 #!/bin/bash
-# v01
+#
 set -x
 
+VERSION=0.2
 DIRNAME=`dirname $0`
 CONFIG_FILE=${DIRNAME}/Setup.conf
 FUNCTIONS_FILE=${DIRNAME}/functions.sh
@@ -14,6 +15,7 @@ fi
 . $CONFIG_FILE
 . $FUNCTIONS_FILE
 
+check_var
 
 # Unmape Linux Lun Drives
 sanlun lun show -p

@@ -1,8 +1,8 @@
 #!/bin/bash
-# echo Discover LUN
-# v01
+#
 set -x
 
+VERSION=0.2
 DIRNAME=`dirname $0`
 CONFIG_FILE=${DIRNAME}/Setup.conf
 FUNCTIONS_FILE=${DIRNAME}/functions.sh
@@ -15,8 +15,7 @@ fi
 . $CONFIG_FILE
 . $FUNCTIONS_FILE
 
-clean_and_exit "Terminate" 255
-exit 
+check_var
 
 /usr/bin/rescan-scsi-bus.sh
 multipath -ll

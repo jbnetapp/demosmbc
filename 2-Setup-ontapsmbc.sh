@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# v01
 #
 set -x
 
+VERSION=0.2
 DIRNAME=`dirname $0`
 CONFIG_FILE=${DIRNAME}/Setup.conf
 FUNCTIONS_FILE=${DIRNAME}/functions.sh
@@ -16,14 +16,25 @@ fi
 . $CONFIG_FILE
 . $FUNCTIONS_FILE
 
+check_var 
+
 # Main
 echo Init SSH session host 
 check_ssh_keyhost cluster1
 check_ssh_keyhost cluster2
 
+which sshpass
+[ $? -ne 0 ] && clean_and_exit "Error sshpass not available: Please install the pacakge"  255
+
 sshpass -p $PASSWD ssh -l admin cluster1 version 
 sshpass -p $PASSWD ssh -l admin cluster2 version 
 
+# Gets Free Data Aggregate
+echo Check for data Aggregate on each clusters 
+AGGR_DATA_CL1=`sshpass -p $PASSWD ssh -l admin cluster1 aggr show -root false |grep online |sort -k2 -u | tail -1 |awk '{print $1}'|tr -d '\r'`
+[ -z "$AGGR_DATA_CL1" ] && clean_and_exit "ERROR: No Data Aggregate found in cluster1"
+AGGR_DATA_CL2=`sshpass -p $PASSWD ssh -l admin cluster2 aggr show -root false |grep online |sort -k2 -u | tail -1 |awk '{print $1}'|tr -d '\r'`
+[ -z "$AGGR_DATA_CL2" ] && clean_and_exit "ERROR: No Data Aggregate found in cluster2"
 
 echo Create InteCluser LIF cluster1
 sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver cluster1 -lif intercluster1 -address $IP_I1 -netmask-length $LMASK -home-node cluster1-01 -service-policy default-intercluster -home-port e0g -status-admin up
@@ -33,6 +44,11 @@ echo Create InteCluser LIF cluster2
 sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver cluster2 -lif intercluster1 -address $IP_I2 -netmask-length $LMASK -home-node cluster2-01 -service-policy default-intercluster -home-port e0g -status-admin up
 sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver cluster2 -lif intercluster2 -address $IP_I4 -netmask-length $LMASK -home-node cluster2-02 -service-policy default-intercluster -home-port e0g -status-admin up
 
+# Check Network link between clusters
+sshpass -p $PASSWD ssh -l admin cluster1 network ping -node cluster1-01 -destination $IP_I2
+sshpass -p $PASSWD ssh -l admin cluster1 network ping -node cluster1-02 -destination $IP_I4
+sshpass -p $PASSWD ssh -l admin cluster2 network ping -node cluster2-01 -destination $IP_I1
+sshpass -p $PASSWD ssh -l admin cluster2 network ping -node cluster2-01 -destination $IP_I3
 
 cps=`sshpass -p $PASSWD ssh -l admin cluster1 cluster peer show |grep cluster2 | awk '{print $4}'|tr -d '\r'`
 if [ "$cps" == "ok" ] ; then
@@ -73,8 +89,8 @@ sshpass -p $PASSWD ssh -l admin cluster2 vserver iscsi create -target-alias $SVM
 sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_admin -service-policy default-data-files -address $IP_SVM_S1 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy mgmt
 sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data1 -service-policy default-data-blocks -address $IP_SVM_S2 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy data
 sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data2 -service-policy default-data-blocks -address $IP_SVM_S3 -netmask-length $LMASK -home-node cluster2-02 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data3 -service-policy default-data-blocks -address $IP_SVM_S3 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data4 -service-policy default-data-blocks -address $IP_SVM_S3 -netmask-length $LMASK -home-node cluster2-02 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data3 -service-policy default-data-blocks -address $IP_SVM_S4 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data4 -service-policy default-data-blocks -address $IP_SVM_S5 -netmask-length $LMASK -home-node cluster2-02 -home-port e0g -firewall-policy data
 
 
 echo Create svm relatoin 
@@ -98,9 +114,6 @@ fi
 
 
 
-# Gets Free Data Aggregate
-AGGR_DATA_CL1=`sshpass -p $PASSWD ssh -l admin cluster1 aggr show -root false |grep online |sort -k2 -u | tail -1 |awk '{print $1}'|tr -d '\r'`
-AGGR_DATA_CL2=`sshpass -p $PASSWD ssh -l admin cluster2 aggr show -root false |grep online |sort -k2 -u | tail -1 |awk '{print $1}'|tr -d '\r'`
 sshpass -p $PASSWD ssh -l admin cluster1 volume create -volume $VOL_NAME_P -vserver $SVM_NAME_P -aggregate $AGGR_DATA_CL1 -size $SIZE -autosize-mode grow -state online
 sshpass -p $PASSWD ssh -l admin cluster2 volume create -volume $VOL_NAME_S -vserver $SVM_NAME_S -aggregate $AGGR_DATA_CL2 -size $SIZE -autosize-mode grow -type DP -state online 
 U_SIZE=`echo $SIZE|sed -e s/[0-9]//g`
@@ -112,14 +125,18 @@ sshpass -p $PASSWD ssh -l admin cluster1 lun create -vserver $SVM_NAME_P -path /
 echo Add the Mediator certificate on each cluser
 crt=`sshpass -p $PASSWD ssh -l admin cluster1 security certificate show -cert-name ONTAPMediatorCA -fields serial |grep ONTAPMediatorCA |tr -d '\r'`
 [ -z "$crt" ] && (sleep 1; cat $CRT_FILE; sleep 2; echo "" ) | sshpass -p $PASSWD ssh -l admin cluster1 security certificate install -type server-ca -vserver cluster1 -cert-name ONTAPMediatorCA
+crt=`sshpass -p $PASSWD ssh -l admin cluster1 security certificate show -cert-name ONTAPMediatorCA -fields serial |grep ONTAPMediatorCA |tr -d '\r'`
+[ -z "$crt" ] && clean_and_exit "ERROR: Failed to install certificate on cluster1" 255
+
 crt=`sshpass -p $PASSWD ssh -l admin cluster2 security certificate show -cert-name ONTAPMediatorCA -fields serial |grep ONTAPMediatorCA |tr -d '\r'`
 [ -z "$crt" ] && (sleep 1; cat $CRT_FILE; sleep 2; echo "" ) | sshpass -p $PASSWD ssh -l admin cluster2 security certificate install -type server-ca -vserver cluster2 -cert-name ONTAPMediatorCA
-
+crt=`sshpass -p $PASSWD ssh -l admin cluster2 security certificate show -cert-name ONTAPMediatorCA -fields serial |grep ONTAPMediatorCA |tr -d '\r'`
+[ -z "$crt" ] && clean_and_exit "ERROR: Failed to install certificate on cluster1" 255
 
 echo Add the Mediator on each cluser
 ms=`sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster2 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`
 if [ "$ms" != "connected" ] ; then
-	(sleep 1; echo $PASSWD; sleep 2; echo $PASSWD)| sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster2 -username mediatoradmin -port-number $MEDIATOR_PORT
+	(sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster2 -username mediatoradmin -port-number $MEDIATOR_PORT
 	time=0 ; while [ "$ms" != "connected" ] && [ $time -lt $TIMEOUT ]; do
 		sleep 1; time=$(($time + 1))
 		ms=`sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster2 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`
@@ -130,7 +147,7 @@ fi
 
 ms=`sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster1 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`
 if [ "$ms" != "connected" ] ; then
-	(sleep 1; echo $PASSWD; sleep 2; echo $PASSWD)| sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster1 -username mediatoradmin -port-number $MEDIATOR_PORT
+	(sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster1 -username mediatoradmin -port-number $MEDIATOR_PORT
 	time=0 ; while [ "$ms" != "connected" ] && [ $time -lt $TIMEOUT ]; do
 		sleep 1; time=$(($time + 1))
 		ms=`sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster1 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`

@@ -1,53 +1,45 @@
 ==================================================================================
 DT
 ==================================================================================
-- add tr -d '\r' on any ssh
-E Cluster Peer create bug 
-- Add VAR For IP
-- Test Aggr DATA
-- Test sshpass commande
-- script 1: Add test for data aggr 
 - script 1: Add test for Mediator Port runing and Certificate CA
-- Test File /etc/iscsi/initiatorname.iscsi 
-- Change Sleep 5 to 2
-- Add SCript install Mediator Package with passwd
+- Script 1: Add Script install Mediator Package with passwd
 
 ==================================================================================
 Prepare VM Linux to be iSCSI Ready
 ===================================================================================
-# [root@centos1 data]# yum install sshpass -y
-# [root@centos1 ~]# cat /etc/redhat-release
-# CentOS Linux release 7.9.2009 (Core)
-# [root@centos1 ~]# yum install tuned -y
-# [root@centos1 ~]# yum install device-mapper -y
-# [root@centos1 ~]# yum install device-mapper-multipath -y
-# [root@centos1 ~]# tuned-adm profile virtual-guest (VM) -y
-# [root@centos1 ~]# cat /etc/iscsi/initiatorname.iscsi
-# InitiatorName=iqn.1994-05.com.redhat:centos1.demo.netapp.com
-# [root@centos1 ~]# vi /etc/iscsi/iscsid.conf
+[root@centos1 data]# yum install sshpass -y
+[root@centos1 ~]# cat /etc/redhat-release
+CentOS Linux release 7.9.2009 (Core)
+[root@centos1 ~]# yum install tuned -y
+[root@centos1 ~]# yum install device-mapper -y
+[root@centos1 ~]# yum install device-mapper-multipath -y
+[root@centos1 ~]# tuned-adm profile virtual-guest (VM) -y
+[root@centos1 ~]# cat /etc/iscsi/initiatorname.iscsi
+InitiatorName=iqn.1994-05.com.redhat:centos1.demo.netapp.com
+[root@centos1 ~]# vi /etc/iscsi/iscsid.conf
 ....
-# node.session.timeo.replacement_timeout = 5
+node.session.timeo.replacement_timeout = 5
 ....
 
-#[root@centos1 ~]# systemctl start iscsid
+[root@centos1 ~]# systemctl start iscsid
 
-#[root@centos1 grub]# cat /proc/cmdline
+[root@centos1 grub]# cat /proc/cmdline
 BOOT_IMAGE=/vmlinuz-3.10.0-1160.6.1.el7.x86_64 root=/dev/mapper/centos-root ro crashkernel=auto spectre_v2=retpoline rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet LANG=en_US.UTF-8
 
-#[root@centos1 grub]# grubby --info=ALL |grep vmlinuz
-#kernel=/boot/vmlinuz-3.10.0-1160.6.1.el7.x86_64
-#kernel=/boot/vmlinuz-3.10.0-1062.el7.x86_64
-#kernel=/boot/vmlinuz-0-rescue-3dd62af04f1c432d8f2ef696486639d8
+[root@centos1 grub]# grubby --info=ALL |grep vmlinuz
+kernel=/boot/vmlinuz-3.10.0-1160.6.1.el7.x86_64
+kernel=/boot/vmlinuz-3.10.0-1062.el7.x86_64
+kernel=/boot/vmlinuz-0-rescue-3dd62af04f1c432d8f2ef696486639d8
 
 
-#[root@centos1 grub]# grubby --args "rdloaddriver=scsi_dh_alua" --update-kernel /boot/vmlinuz-3.10.0-1160.6.1.el7.x86_64
-#[root@centos1 ~]# reboot 
+[root@centos1 grub]# grubby --args "rdloaddriver=scsi_dh_alua" --update-kernel /boot/vmlinuz-3.10.0-1160.6.1.el7.x86_64
+[root@centos1 ~]# reboot 
 
-#[root@centos1 ~]# cat /proc/cmdline
+[root@centos1 ~]# cat /proc/cmdline
 BOOT_IMAGE=/vmlinuz-3.10.0-1160.6.1.el7.x86_64 root=/dev/mapper/centos-root ro crashkernel=auto spectre_v2=retpoline rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet LANG=en_US.UTF-8 rdloaddriver=scsi_dh_alua
 
 
-#[root@centos1 ~]# multipath -t
+[root@centos1 ~]# multipath -t
 defaults {
         verbosity 2
         polling_interval 5
@@ -119,7 +111,7 @@ multipaths {
 Install NetApp Linux HUK
 ==================================================================================
 [root@centos1 ~]# rpm -i /tmp/netapp_linux_unified_host_utilities-7-1.x86_64.rpm
-
+libHBAAPI.so
 
 ==================================================================================
 CRATE SAN iSCSI VSERVER
