@@ -26,12 +26,12 @@ sshpass -p $PASSWD ssh -l admin cluster2 version
 
 
 echo Create InteCluser LIF cluster1
-sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver cluster1 -lif intercluster1 -address 192.168.0.115 -netmask-length 24 -home-node cluster1-01 -service-policy default-intercluster -home-port e0g -status-admin up
-sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver cluster1 -lif intercluster2 -address 192.168.0.116 -netmask-length 24 -home-node cluster1-02 -service-policy default-intercluster -home-port e0g -status-admin up
+sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver cluster1 -lif intercluster1 -address $IP_I1 -netmask-length $LMASK -home-node cluster1-01 -service-policy default-intercluster -home-port e0g -status-admin up
+sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver cluster1 -lif intercluster2 -address $IP_I3 -netmask-length $LMASK -home-node cluster1-02 -service-policy default-intercluster -home-port e0g -status-admin up
 
 echo Create InteCluser LIF cluster2
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver cluster2 -lif intercluster1 -address 192.168.0.117 -netmask-length 24 -home-node cluster2-01 -service-policy default-intercluster -home-port e0g -status-admin up
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver cluster2 -lif intercluster2 -address 192.168.0.118 -netmask-length 24 -home-node cluster2-02 -service-policy default-intercluster -home-port e0g -status-admin up
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver cluster2 -lif intercluster1 -address $IP_I2 -netmask-length $LMASK -home-node cluster2-01 -service-policy default-intercluster -home-port e0g -status-admin up
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver cluster2 -lif intercluster2 -address $IP_I4 -netmask-length $LMASK -home-node cluster2-02 -service-policy default-intercluster -home-port e0g -status-admin up
 
 
 cps=`sshpass -p $PASSWD ssh -l admin cluster1 cluster peer show |grep cluster2 | awk '{print $4}'|tr -d '\r'`
@@ -39,14 +39,14 @@ if [ "$cps" == "ok" ] ; then
 	cps=`sshpass -p $PASSWD ssh -l admin cluster2 cluster peer show |grep cluster1 | awk '{print $4}'|tr -d '\r'`
 	[ "$cps" != "ok" ] && clean_and_exit "Error Cluster Peer is in bad status please correct it and try again" 255
 else
-	[ "$cps" != "pending" ] && (sleep 1; echo $PASSWD ; sleep 2; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster1 cluster peer create -address-family ipv4 -peer-addrs 192.168.0.117
+	[ "$cps" != "pending" ] && (sleep 1; echo $PASSWD ; sleep 2; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster1 cluster peer create -address-family ipv4 -peer-addrs $IP_I2
 	time=0 ; while [ "$cps" != "pending" ] && [ $time -lt $TIMEOUT ]; do
 		sleep 1; time=$(($time + 1))
 		cps=`sshpass -p $PASSWD ssh -l admin cluster1 cluster peer show |grep cluster2 | awk '{print $4}'|tr -d '\r'`
 		echo "Cluster peer status is [$cps] [$time]"
 	done
 	[ "$cps" != "pending" ] && clean_and_exit "Error Unable to create cluster peer from cluster1" 255
-	(sleep 1; echo $PASSWD ; sleep 2; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster2 cluster peer create -address-family ipv4 -peer-addrs 192.168.0.115
+	(sleep 1; echo $PASSWD ; sleep 2; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster2 cluster peer create -address-family ipv4 -peer-addrs $IP_I1 
 	time=0 ; while [ "$cps" != "ok" ] && [ $time -lt $TIMEOUT ]; do
 		sleep 1; time=$(($time + 1))
 		cps=`sshpass -p $PASSWD ssh -l admin cluster2 cluster peer show |grep cluster1 | awk '{print $4}'|tr -d '\r'`
@@ -61,20 +61,20 @@ sshpass -p $PASSWD ssh -l admin cluster2 cluster peer show
 echo Create $SVM_NAME_P cluster1
 sshpass -p $PASSWD ssh -l admin cluster1 vserver create -vserver $SVM_NAME_P -subtype default 
 sshpass -p $PASSWD ssh -l admin cluster1 vserver iscsi create -target-alias $SVM_NAME_P -status-admin up
-sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_admin -service-policy default-data-files -address 192.168.0.130 -netmask-length 24 -home-node cluster1-01 -home-port e0g -firewall-policy mgmt
-sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data1 -service-policy default-data-blocks -address 192.168.0.131 -netmask-length 24 -home-node cluster1-01 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data2 -service-policy default-data-blocks -address 192.168.0.132 -netmask-length 24 -home-node cluster1-02 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data3 -service-policy default-data-blocks -address 192.168.0.133 -netmask-length 24 -home-node cluster1-01 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data4 -service-policy default-data-blocks -address 192.168.0.134 -netmask-length 24 -home-node cluster1-02 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_admin -service-policy default-data-files -address $IP_SVM_P1 -netmask-length $LMASK -home-node cluster1-01 -home-port e0g -firewall-policy mgmt
+sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data1 -service-policy default-data-blocks -address $IP_SVM_P2 -netmask-length $LMASK -home-node cluster1-01 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data2 -service-policy default-data-blocks -address $IP_SVM_P3 -netmask-length $LMASK -home-node cluster1-02 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data3 -service-policy default-data-blocks -address $IP_SVM_P4 -netmask-length $LMASK -home-node cluster1-01 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data4 -service-policy default-data-blocks -address $IP_SVM_P5 -netmask-length $LMASK -home-node cluster1-02 -home-port e0g -firewall-policy data
 
 echo Create $SVM_NAME_S cluster2
 sshpass -p $PASSWD ssh -l admin cluster2 vserver create -vserver $SVM_NAME_S -subtype default 
 sshpass -p $PASSWD ssh -l admin cluster2 vserver iscsi create -target-alias $SVM_NAME_S -status-admin up
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_admin -service-policy default-data-files -address 192.168.0.140 -netmask-length 24 -home-node cluster2-01 -home-port e0g -firewall-policy mgmt
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data1 -service-policy default-data-blocks -address 192.168.0.141 -netmask-length 24 -home-node cluster2-01 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data2 -service-policy default-data-blocks -address 192.168.0.142 -netmask-length 24 -home-node cluster2-02 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data3 -service-policy default-data-blocks -address 192.168.0.143 -netmask-length 24 -home-node cluster2-01 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data4 -service-policy default-data-blocks -address 192.168.0.144 -netmask-length 24 -home-node cluster2-02 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_admin -service-policy default-data-files -address $IP_SVM_S1 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy mgmt
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data1 -service-policy default-data-blocks -address $IP_SVM_S2 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data2 -service-policy default-data-blocks -address $IP_SVM_S3 -netmask-length $LMASK -home-node cluster2-02 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data3 -service-policy default-data-blocks -address $IP_SVM_S3 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data4 -service-policy default-data-blocks -address $IP_SVM_S3 -netmask-length $LMASK -home-node cluster2-02 -home-port e0g -firewall-policy data
 
 
 echo Create svm relatoin 
