@@ -3,7 +3,7 @@
 # Install Mediator and Host utilities kit
 #
 set -x
-VERSION=0.2
+VERSION=0.3
 DIRNAME=`dirname $0`
 CONFIG_FILE=${DIRNAME}/Setup.conf
 FUNCTIONS_FILE=${DIRNAME}/functions.sh
@@ -26,8 +26,7 @@ NETAPP_MEDIATOR_21_PK=${DIRNAME}/pkg/ONTAP-MEDIATOR-1.2BAD
 [ ! -f $NETAPP_LINUX_HUK_71_PKG ] && clean_and_exit "Error $NETAPP_LINUX_HUK_71_PKG no such file" 255
 rpm -i $NETAPP_LINUX_HUK_71_PKG
 
-which sanlun
-[ $? -ne 0 ] && clean_and_exit "Error sanlun failed to install" 255 
+check_netapp_linux_bin
 
 [ ! -f $NETAPP_MEDIATOR_21_PK ] && clean_and_exit "Error $NETAPP_MEDIATOR_21_PKG no such file" 255
 

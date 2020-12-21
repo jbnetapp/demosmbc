@@ -2,7 +2,7 @@
 # Functions
 #  
 #
-FUNCTIONS_VERSION=0.2
+FUNCTIONS_VERSION=0.3
 
 clean_and_exit(){
         echo $1 ; [ $2 -ne 0 ] && exit $2
@@ -12,6 +12,16 @@ check_ssh_keyhost(){
 	cluster_name=$1
 	SSH_Name=`cat $HOME/.ssh/known_hosts  | awk -v cluster_name=$cluster_name '{if ( $1 == cluster_name ) print $1}'|tr -d '\r'`
 	[ -z "$SSH_Name" ] &&  ssh-keyscan $cluster_name >> $HOME/.ssh/known_hosts 
+}
+
+check_linux_bin(){
+	which sshpass ; [ $? -ne 0 ] && clean_and_exit "Error sshpass not available: Please install the pacakge"  255
+	which multipath ; [ $? -ne 0 ] && clean_and_exit "Error sanlun failed to install" 255
+	which rescan-scsi-bus.sh ; [ $? -ne 0 ] && clean_and_exit "Error: rescan-scsi-bus.sh not available" 255
+}
+
+check_netapp_linux_bin(){
+	which sanlun ; [ $? -ne 0 ] && clean_and_exit "ERROR: sanlun not available" 0
 }
 
 check_var(){
@@ -47,4 +57,5 @@ check_var(){
 [ -z "$MEDIATOR_PASSWD" ] && clean_and_exit "Error variable not defined: MEDIATOR_PASSWD" 255
 [ -z "$CRT_FILE" ] && clean_and_exit "Error variable not defined: CRT_FILE" 255
 [ -z "$LINUX_ISCSI_INITIATOR_FILE" ] && clean_and_exit "Error variable not defined: LINUX_ISCSI_INITIATOR_FILE" 255
+[ -z "$MNT_DATA" ] && clean_and_exit "Error variable not defined: MNT_DATA" 255
 }

@@ -3,7 +3,7 @@
 #
 set -x
 
-VERSION=0.2
+VERSION=0.3
 DIRNAME=`dirname $0`
 CONFIG_FILE=${DIRNAME}/Setup.conf
 FUNCTIONS_FILE=${DIRNAME}/functions.sh
@@ -16,15 +16,14 @@ fi
 . $CONFIG_FILE
 . $FUNCTIONS_FILE
 
-check_var 
-
 # Main
+check_var 
+check_linux_bin
+
 echo Init SSH session host 
 check_ssh_keyhost cluster1
 check_ssh_keyhost cluster2
 
-which sshpass
-[ $? -ne 0 ] && clean_and_exit "Error sshpass not available: Please install the pacakge"  255
 
 sshpass -p $PASSWD ssh -l admin cluster1 version 
 sshpass -p $PASSWD ssh -l admin cluster2 version 
@@ -55,16 +54,16 @@ if [ "$cps" == "ok" ] ; then
 	cps=`sshpass -p $PASSWD ssh -l admin cluster2 cluster peer show |grep cluster1 | awk '{print $4}'|tr -d '\r'`
 	[ "$cps" != "ok" ] && clean_and_exit "Error Cluster Peer is in bad status please correct it and try again" 255
 else
-	[ "$cps" != "pending" ] && (sleep 1; echo $PASSWD ; sleep 2; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster1 cluster peer create -address-family ipv4 -peer-addrs $IP_I2
 	time=0 ; while [ "$cps" != "pending" ] && [ $time -lt $TIMEOUT ]; do
-		sleep 1; time=$(($time + 1))
+		[ "$cps" != "pending" ] && (sleep 1; echo $PASSWD ; sleep 2; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster1 cluster peer create -address-family ipv4 -peer-addrs $IP_I2
+		sleep 5; time=$(($time + 5))
 		cps=`sshpass -p $PASSWD ssh -l admin cluster1 cluster peer show |grep cluster2 | awk '{print $4}'|tr -d '\r'`
 		echo "Cluster peer status is [$cps] [$time]"
 	done
 	[ "$cps" != "pending" ] && clean_and_exit "Error Unable to create cluster peer from cluster1" 255
-	(sleep 1; echo $PASSWD ; sleep 2; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster2 cluster peer create -address-family ipv4 -peer-addrs $IP_I1 
 	time=0 ; while [ "$cps" != "ok" ] && [ $time -lt $TIMEOUT ]; do
-		sleep 1; time=$(($time + 1))
+		(sleep 1; echo $PASSWD ; sleep 2; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster2 cluster peer create -address-family ipv4 -peer-addrs $IP_I1 
+		sleep 5; time=$(($time + 5))
 		cps=`sshpass -p $PASSWD ssh -l admin cluster2 cluster peer show |grep cluster1 | awk '{print $4}'|tr -d '\r'`
 		echo "Cluster peer status is [$cps] [$time]"
 	done
@@ -122,18 +121,27 @@ LUN_SIZE=$(($N_SIZE - 1))${U_SIZE}
 sshpass -p $PASSWD ssh -l admin cluster1 lun create -vserver $SVM_NAME_P -path /vol/${VOL_NAME_P}/${LUN_NAME} -size $LUN_SIZE -ostype Linux -space-reserve disabled
 
 
-echo Add the Mediator certificate on each cluser
+echo Add certificate on cluster1 
 crt=`sshpass -p $PASSWD ssh -l admin cluster1 security certificate show -cert-name ONTAPMediatorCA -fields serial |grep ONTAPMediatorCA |tr -d '\r'`
-[ -z "$crt" ] && (sleep 1; cat $CRT_FILE; sleep 2; echo "" ) | sshpass -p $PASSWD ssh -l admin cluster1 security certificate install -type server-ca -vserver cluster1 -cert-name ONTAPMediatorCA
+time=0 ; while [ -z "$crt" ] && [ $time -lt $TIMEOUT ]; do
+	sleep 5; time=$(($time + 5))
+	[ -z "$crt" ] && (sleep 1; cat $CRT_FILE; sleep 2; echo "" ) | sshpass -p $PASSWD ssh -l admin cluster1 security certificate install -type server-ca -vserver cluster1 -cert-name ONTAPMediatorCA
+	crt=`sshpass -p $PASSWD ssh -l admin cluster1 security certificate show -cert-name ONTAPMediatorCA -fields serial |grep ONTAPMediatorCA |tr -d '\r'`
+done
 crt=`sshpass -p $PASSWD ssh -l admin cluster1 security certificate show -cert-name ONTAPMediatorCA -fields serial |grep ONTAPMediatorCA |tr -d '\r'`
 [ -z "$crt" ] && clean_and_exit "ERROR: Failed to install certificate on cluster1" 255
 
+echo Add certificate on cluster2 
 crt=`sshpass -p $PASSWD ssh -l admin cluster2 security certificate show -cert-name ONTAPMediatorCA -fields serial |grep ONTAPMediatorCA |tr -d '\r'`
-[ -z "$crt" ] && (sleep 1; cat $CRT_FILE; sleep 2; echo "" ) | sshpass -p $PASSWD ssh -l admin cluster2 security certificate install -type server-ca -vserver cluster2 -cert-name ONTAPMediatorCA
+time=0 ; while [ -z "$crt" ] && [ $time -lt $TIMEOUT ]; do
+	sleep 5; time=$(($time + 5))
+	[ -z "$crt" ] && (sleep 1; cat $CRT_FILE; sleep 2; echo "" ) | sshpass -p $PASSWD ssh -l admin cluster2 security certificate install -type server-ca -vserver cluster2 -cert-name ONTAPMediatorCA
+	crt=`sshpass -p $PASSWD ssh -l admin cluster2 security certificate show -cert-name ONTAPMediatorCA -fields serial |grep ONTAPMediatorCA |tr -d '\r'`
+done
 crt=`sshpass -p $PASSWD ssh -l admin cluster2 security certificate show -cert-name ONTAPMediatorCA -fields serial |grep ONTAPMediatorCA |tr -d '\r'`
-[ -z "$crt" ] && clean_and_exit "ERROR: Failed to install certificate on cluster1" 255
+[ -z "$crt" ] && clean_and_exit "ERROR: Failed to install certificate on cluster2" 255
 
-echo Add the Mediator on each cluser
+echo Add the Mediator on cluster1
 ms=`sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster2 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`
 if [ "$ms" != "connected" ] ; then
 	(sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster2 -username mediatoradmin -port-number $MEDIATOR_PORT
@@ -145,6 +153,7 @@ if [ "$ms" != "connected" ] ; then
 	[ "$ms" != "connected" ] && clean_and_exit "Error Failed to create mediator on clsuter1" 255
 fi
 
+echo Add the Mediator on cluster2 
 ms=`sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster1 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`
 if [ "$ms" != "connected" ] ; then
 	(sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster1 -username mediatoradmin -port-number $MEDIATOR_PORT

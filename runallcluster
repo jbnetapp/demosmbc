@@ -12,12 +12,12 @@ fi
 . $CONFIG_FILE
 . $FUNCTIONS_FILE
 
+check_var
+check_linux_bin 
+
 echo Init SSH session host
 check_ssh_keyhost cluster1
 check_ssh_keyhost cluster2
-
-which sshpass
-[ $? -ne 0 ] && clean_and_exit "Error sshpass not available: Please install the pacakge"  255
 
 echo =========================================================================================
 echo "cluster1 > $@"

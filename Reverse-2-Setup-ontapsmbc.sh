@@ -2,7 +2,7 @@
 #
 set -x
 
-VERSION=0.2
+VERSION=0.3
 DIRNAME=`dirname $0`
 CONFIG_FILE=${DIRNAME}/Setup.conf
 FUNCTIONS_FILE=${DIRNAME}/functions.sh
@@ -16,13 +16,12 @@ fi
 . $FUNCTIONS_FILE
 
 check_var
+check_linux_bin
 
 echo Init SSH session host 
 check_ssh_keyhost cluster1
 check_ssh_keyhost cluster2
 
-which sshpass
-[ $? -ne 0 ] && clean_and_exit "Error sshpass not available: Please install the pacakge"  255
 
 echo Unmap LUN
 sshpass -p $PASSWD ssh -l admin cluster1 lun unmap -vserver $SVM_NAME_P -path /vol/${VOL_NAME_P}/${LUN_NAME} -igroup centos01
