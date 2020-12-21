@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Install Mediator and Host utilities kit
+# Install NetApp Mediator and NetApp Host Utilities
 #
 set -x
 VERSION=0.4

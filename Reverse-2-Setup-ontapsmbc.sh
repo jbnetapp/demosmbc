@@ -1,7 +1,6 @@
 #!/bin/bash
 #
 set -x
-
 VERSION=0.4
 DIRNAME=`dirname $0`
 CONFIG_FILE=${DIRNAME}/Setup.conf
