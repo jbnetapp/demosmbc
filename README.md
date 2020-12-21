@@ -178,7 +178,8 @@ SVM_SAN_P                     /vol/LUN01_P/LUN01             /dev/sdb        hos
 
 ````
 
-Now you can play with SMBC in real life :smile:
+Now you are ready to play with SMBC in real life :smile:
+<img src="Pictures/SystemManagerSMBC.png" alt="NetApp System Manager" width="1100" height="500">
 
 NetApp SMBC Documentation is available here:
 --------------------------------------------
