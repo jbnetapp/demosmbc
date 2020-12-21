@@ -3,7 +3,7 @@
 # Install Mediator and Host utilities kit
 #
 set -x
-VERSION=0.3
+VERSION=0.4
 DIRNAME=`dirname $0`
 CONFIG_FILE=${DIRNAME}/Setup.conf
 FUNCTIONS_FILE=${DIRNAME}/functions.sh

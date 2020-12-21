@@ -1,8 +1,7 @@
 #
 # Functions
-#  
 #
-FUNCTIONS_VERSION=0.3
+FUNCTIONS_VERSION=0.4
 
 clean_and_exit(){
         echo $1 ; [ $2 -ne 0 ] && exit $2
@@ -15,9 +14,9 @@ check_ssh_keyhost(){
 }
 
 check_linux_bin(){
-	which sshpass ; [ $? -ne 0 ] && clean_and_exit "Error sshpass not available: Please install the pacakge"  255
-	which multipath ; [ $? -ne 0 ] && clean_and_exit "Error sanlun failed to install" 255
-	which rescan-scsi-bus.sh ; [ $? -ne 0 ] && clean_and_exit "Error: rescan-scsi-bus.sh not available" 255
+	which sshpass > /dev/null 2>&1 ; [ $? -ne 0 ] && clean_and_exit "Error sshpass not available: Please install the pacakge"  255
+	which multipath  > /dev/null 2>&1 ; [ $? -ne 0 ] && clean_and_exit "Error unable to run multipath" 255
+	which rescan-scsi-bus.sh > /dev/null 2>&1  ; [ $? -ne 0 ] && clean_and_exit "Error: rescan-scsi-bus.sh not available" 255
 }
 
 check_netapp_linux_bin(){
