@@ -1,19 +1,26 @@
-## demosmbc
-
 This lab allow you to test NetApp SMBC base on the following lab:
 ------------------------------------------------------------------
 - Lab: https://labondemand.netapp.com/lab/sl10628 
 
 Script provide with this demo allow you to build a SnapMirror SMBC LAB
 ----------------------------------------------------------------------
-Before to start this lab you have to configure each aggregagte on cluster1 and Cluster2 using System Manager 
+Before to start this lab you have to configure each aggregate  on cluster1 and Cluster2 using System Manager 
 - using Menu **STORAGE -> Tieres -> Add Local Tier**
 
-- The the script **0-Setup-Linux-iscsi.sh** will install all required Linux Packages and confirm the gub update and reboot
-- The script **1-Install-Linux-NetAppTools.sh** will automatically  Install **NetApp host utilities kit** and **the NetApp Mediator 1.2** in the pkg directory  
-- The script **2-Setup-ontapsmbc.sh** will automatically build the complet SMBC configuration:
+The following script are avaialbe to build you SMBC configuration from cluster1 and cluster2:
+- The the script **0-Setup-Linux-iscsi.sh** will install all required Linux Packages and will configure kernel variable  it will and reboot the system.
+- The script **1-Install-Linux-NetAppTools.sh** will automatically  Install **NetApp host utilities kit** and **the NetApp Mediator 1.2** available  the [pkg directory](https://github.com/jbnetapp/demosmbc/tree/main/pkg)   
+- The script **2-Setup-ontapsmbc.sh** will automatically build the full SMBC configuration:
 	- Create Intercluster LIFS on cluster1 and cluster2
-	- Create Cluster peer 
+	- Create Cluster peer between cluster1 and cluster2
+	- Create vserver SAN with 4 iscsi DATA LIF on cluster1 and cluster2
+	- Create vserver peer between vserver SAN of cluster1 and cluster2
+	- Create a certificate for the Mediator on cluster1 and cluster2
+	- Add a mediator on Cluster1 and Cluster2
+	- Create a new SAN Lun on a new volume on Cluster1
+	- Create SnapMirror synchronous consistency group replication from this volume to the cluster2 with AutomatedFailOver policy
+	- Mapp the LUN to the iqn/igroup from cluster1 and cluster2
+	
 - The script **3-Linux-LunDiscover.sh**
 	- The script will disconver the LUN and create a LVM configuration on the LUN with and ext4 filessytem
 	
