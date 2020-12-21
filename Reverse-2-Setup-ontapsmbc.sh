@@ -6,6 +6,7 @@ VERSION=0.3
 DIRNAME=`dirname $0`
 CONFIG_FILE=${DIRNAME}/Setup.conf
 FUNCTIONS_FILE=${DIRNAME}/functions.sh
+OPT=$1
 
 if [ ! -f $CONFIG_FILE ] ; then
         echo "ERROR: Unable to read $CONFIG_FILE"
@@ -93,6 +94,7 @@ sshpass -p $PASSWD ssh -l admin cluster2 volume delete -volume $VOL_NAME_S -vser
 vol=`sshpass -p $PASSWD ssh -l admin cluster2 volume show -volume $VOL_NAME_S -vserver $SVM_NAME_S -field volume |grep $VOL_NAME_S |tr -d '\r'`
 [ ! -z "$vol" ] && clean_and_exit "Error Unable to delete volume $VOL_NAME_S" 255
 
+[ "$OPT" == "partial" ] && clean_and_exit "Partial reverse: Do Not delete SVM: exit" 1
 
 echo Delete Vserver peer 
 sshpass -p $PASSWD ssh -l admin cluster1 vserver peer delete -vserver $SVM_NAME_P -peer-vserver $SVM_NAME_S

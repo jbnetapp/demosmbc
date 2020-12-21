@@ -57,4 +57,10 @@ if [ -f $KERNEL_FILE ] ; then
 		echo "And check if you sse the variable rdloaddriver=scsi_dh_alua in the kernel" 
 	fi
 fi
+
+gettext "Reboot Linux now [y/n]? : "
+read input 
+if [ "$input" == "y" ] ; then
+	reboot
+fi
 clean_and_exit "terminate" 0
