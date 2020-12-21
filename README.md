@@ -18,17 +18,17 @@ The following script are avaialbe to build you SMBC configuration from cluster1 
 	- Create a certificate for the Mediator on cluster1 and cluster2
 	- Add a mediator on Cluster1 and Cluster2
 	- Create a new SAN Lun on a new volume on Cluster1
-	- Create SnapMirror synchronous consistency group replication from this volume to the cluster2 with AutomatedFailOver policy
+	- Create SnapMirror synchronous consistency group replication from this volume to the cluster2 with *AutomatedFailOver* policy
 	- Mapp the LUN to the iqn/igroup from cluster1 and cluster2
 	
 - The script **3-Linux-LunDiscover.sh**
-	- The script will disconver the LUN and create a LVM configuration on the LUN with and ext4 filessytem
+	- The script will discover the LUN and create a LVM configuration on top of the LUN with and ext4 filesystem
 	
-you can reverse the configuration bye running the script the following scripts
-- The first script **Reverse-3-Linux-LunDiscover.sh** will automaticlly unmap the LUN and remove all Linux devices and iscsi targets
+you can reverse the configuration bye running the script the following scripts:
+- The first script **Reverse-3-Linux-LunDiscover.sh** will automatically unmap the LUN and will remove all Linux devices and iscsi targets discoverd by the script *3-Linux-LunDiscover.sh*
 - The sceconds script **Reverse-2-Setup-ontapsmbc.sh** will delete all ONTAP LUN and SVM, mediator, certificate etc.. this script **MUST** be run after the script *Reverse-3-Linux-LunDiscover.sh*
 
-- All script used the configuration File **Setup.conf**
+- All script used the same configuration File **Setup.conf**
 
 # Example
 Used putty to logon with ssh on the linux centos01
@@ -178,7 +178,7 @@ SVM_SAN_P                     /vol/LUN01_P/LUN01             /dev/sdb        hos
 
 ````
 
-Now you can play with SMBC.
+Now you can play with SMBC in real life :smile:
 
 NetApp SMBC Documentation is available here:
 --------------------------------------------
