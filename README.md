@@ -9,19 +9,37 @@ Script provide with this demo allow you to build a SnapMirror SMBC LAB
 Before to start this lab you have to configure each aggregagte on cluster1 and Cluster2 using System Manager 
 - using Menu **STORAGE -> Tieres -> Add Local Tier**
 
-Please run all the folowing on linux centos01 [ssh 192.168.0.61]
-- Run the script **0-Setup-Linux-iscsi.sh** to install all required Linux Packages and confirm the gub update and reboot
-- After reboot run **cat /proc/cmdline** to verify if *rdloaddriver=scsi_dh_alua* has been add in the running kernel
-- Run the script **1-Install-Linux-NetAppTools.sh** to automatically to Install NetApp host utilities kit and the NetApp Mediator 1.2  
-- Run the script **2-Setup-ontapsmbc.sh** to automatically build SMBC configuration the script will
-- Run the script **3-Linux-LunDiscover.sh**
+- The the script **0-Setup-Linux-iscsi.sh** will install all required Linux Packages and confirm the gub update and reboot
+- The script **1-Install-Linux-NetAppTools.sh** will automatically  Install **NetApp host utilities kit** and **the NetApp Mediator 1.2** in the pkg directory  
+- The script **2-Setup-ontapsmbc.sh** will automatically build the complet SMBC configuration:
+	- Create Intercluster LIFS on cluster1 and cluster2
+	- Create Cluster peer 
+- The script **3-Linux-LunDiscover.sh**
 	- The script will disconver the LUN and create a LVM configuration on the LUN with and ext4 filessytem
-	- Confirm the LUN will have 4-path on cluster1 and 4-path on clsuter2 [multipaht -ll]
+	
+you can reverse the configuration bye running the script the following scripts
+- The first script **Reverse-3-Linux-LunDiscover.sh** will automaticlly unmap the LUN and remove all Linux devices and iscsi targets
+- The sceconds script **Reverse-2-Setup-ontapsmbc.sh** will delete all ONTAP LUN and SVM, mediator, certificate etc.. this script **MUST** be run after the script *Reverse-3-Linux-LunDiscover.sh*
+
+- All script used the configuration File **Setup.conf**
 
 # Example
-Run the first script and confirm the grub update and 
+Used putty to logon with ssh on the linux centos01
 ````
-[root@centos1 ~]# cd git/demosmbc/
+IP: 192.168.0.61
+Login root
+Password: Netapp1! 
+````
+Use git clone to get all script and required packages
+````
+[root@centos1 ~]# mkdir git
+[root@centos1 ~]# cd git
+[root@centos1 git]# cgit clone https://github.com/jbnetapp/demosmbc
+[root@centos1 git]# cd demosmbc/
+````
+
+Run the first script to check in install yum package and confirm the grub kernel update and confirm the linux reboot:
+````
 [root@centos1 demosmbc]# ./0-Setup-Linux-iscsi.sh
 ...
 ...
@@ -41,40 +59,119 @@ Run the second script to install NetApp Linux Package *Host utilities kit* and *
 ...
 Terminate
 ````
-Check if the same Lun has been created on both cluster
+
+Check the Mediator status on both clusters
 ````
-[root@centos1 demosmbc]# ./runallcluster lun show
+[root@centos1 demosmbc]# ./runallcluster snapmirror mediator show
 /usr/bin/sshpass
 /usr/sbin/multipath
 /usr/bin/rescan-scsi-bus.sh
 Init SSH session host
 =========================================================================================
-cluster1 > lun show
+cluster1 > snapmirror mediator show
 Access restricted to authorized users
 
-Last login time: 12/21/2020 19:44:32
-Vserver   Path                            State   Mapped   Type        Size
---------- ------------------------------- ------- -------- -------- --------
-SVM_SAN_P /vol/LUN01_P/LUN01              online  mapped   linux         9GB
+Last login time: 12/21/2020 20:55:47
+Mediator Address Peer Cluster     Connection Status Quorum Status
+---------------- ---------------- ----------------- -------------
+192.168.0.61     cluster2         connected         true
 
 =========================================================================================
-cluster2 > lun show
+cluster2 > snapmirror mediator show
 Access restricted to authorized users
 
-Last login time: 12/21/2020 19:44:32
-Vserver   Path                            State   Mapped   Type        Size
---------- ------------------------------- ------- -------- -------- --------
-SVM_SAN_S /vol/LUN01_S/LUN01              online  mapped   linux         9GB
+Last login time: 12/21/2020 20:55:48
+Mediator Address Peer Cluster     Connection Status Quorum Status
+---------------- ---------------- ----------------- -------------
+192.168.0.61     cluster1         connected         true
+````
+
+Check SnapMirror and verify if the same Lun has been created on both clusters with same serial number
+````
+[root@centos1 demosmbc]# ssh -l admin cluster2 snapmirror show
+Access restricted to authorized users
+Password:
+Last login time: 12/21/2020 20:44:24
+                                                                       Progress
+Source            Destination Mirror  Relationship   Total             Last
+Path        Type  Path        State   Status         Progress  Healthy Updated
+----------- ---- ------------ ------- -------------- --------- ------- --------
+SVM_SAN_P:/cg/cg_p XDP SVM_SAN_S:/cg/cg_s Snapmirrored InSync - true   -
+
+[root@centos1 demosmbc]# ./runallcluster lun show -fields serial
+/usr/bin/sshpass
+/usr/sbin/multipath
+/usr/bin/rescan-scsi-bus.sh
+Init SSH session host
+=========================================================================================
+cluster1 > lun show -fields serial
+Access restricted to authorized users
+
+Last login time: 12/21/2020 20:44:23
+vserver   path               serial
+--------- ------------------ ------------
+SVM_SAN_P /vol/LUN01_P/LUN01 wOj7N$QPt5OO
+
+=========================================================================================
+cluster2 > lun show -fields serial
+Access restricted to authorized users
+
+Last login time: 12/21/2020 20:46:56
+vserver   path               serial
+--------- ------------------ ------------
+SVM_SAN_S /vol/LUN01_S/LUN01 wOj7N$QPt5OO
+````
+
+Run the script to discover the LUN on Linux and create a ext4 file sytem on LVM using this LUN
+````
+[root@centos1 demosmbc]# ./3-Linux-LunDiscover.sh
+....
+Terminate
 
 ````
 
+Verfiy if you have see the file system on LVM device
+````
+[root@centos1 demosmbc]# df -h /data
+Filesystem               Size  Used Avail Use% Mounted on
+/dev/mapper/vgdata-lv01  8.8G   37M  8.3G   1% /data
 
+[root@centos1 demosmbc]# vgdisplay vgdata -v |grep "PV Name"
+  PV Name               /dev/mapper/3600a0980774f6a374e24515074354f4f
+````
 
+Check verify you have 8 available path for the LUN (4 on each cluster)
+````
+[root@centos1 demosmbc]# multipath -ll /dev/mapper/3600a0980774f6a374e24515074354f4f
+3600a0980774f6a374e24515074354f4f dm-2 NETAPP  ,LUN C-Mode
+size=9.0G features='4 queue_if_no_path pg_init_retries 50 retain_attached_hw_handle' hwhandler='1 alua' wp=rw
+|-+- policy='service-time 0' prio=50 status=active
+| |- 66:0:0:0 sdc 8:32  active ready running
+| `- 68:0:0:0 sde 8:64  active ready running
+`-+- policy='service-time 0' prio=10 status=enabled
+  |- 65:0:0:0 sdb 8:16  active ready running
+  |- 67:0:0:0 sdd 8:48  active ready running
+  |- 70:0:0:0 sdg 8:96  active ready running
+  |- 69:0:0:0 sdf 8:80  active ready running
+  |- 72:0:0:0 sdh 8:112 active ready running
+  `- 71:0:0:0 sdi 8:128 active ready running
 
+[root@centos1 demosmbc]# sanlun lun show
+controller(7mode/E-Series)/                                  device          host                  lun
+vserver(cDOT/FlashRay)        lun-pathname                   filename        adapter    protocol   size    product
+---------------------------------------------------------------------------------------------------------------
+SVM_SAN_S                     /vol/LUN01_S/LUN01             /dev/sdi        host71     iSCSI      9g      cDOT
+SVM_SAN_S                     /vol/LUN01_S/LUN01             /dev/sdh        host72     iSCSI      9g      cDOT
+SVM_SAN_S                     /vol/LUN01_S/LUN01             /dev/sdg        host70     iSCSI      9g      cDOT
+SVM_SAN_S                     /vol/LUN01_S/LUN01             /dev/sdf        host69     iSCSI      9g      cDOT
+SVM_SAN_P                     /vol/LUN01_P/LUN01             /dev/sde        host68     iSCSI      9g      cDOT
+SVM_SAN_P                     /vol/LUN01_P/LUN01             /dev/sdc        host66     iSCSI      9g      cDOT
+SVM_SAN_P                     /vol/LUN01_P/LUN01             /dev/sdd        host67     iSCSI      9g      cDOT
+SVM_SAN_P                     /vol/LUN01_P/LUN01             /dev/sdb        host65     iSCSI      9g      cDOT
 
+````
 
-
-
+Now you can play with SMBC.
 
 NetApp SMBC Documentation is available here:
 --------------------------------------------
