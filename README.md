@@ -199,10 +199,11 @@ SVM_SAN_P                     /vol/LUN01_P/LUN01             /dev/sdb        hos
 
 ````
 
-Now you are ready to play with SMBC in real life to demonstrate the resilience :smile: 
-To demonstrate the LUN is alway available you could:
-- Pout all Data LIF port donw the LUN *network interface modify -status-admin down -lif <>*
-- Failover or Reboot or destroy all cluster1 or cluster3
+Now you are ready to play with SMBC in real life :smile: 
+
+To demonstrate the SAN LUN residency you could:
+- Put all Data LIF down from primary cluster1 *network interface modify -status-admin down -lif <>*
+- Failover or Reboot or destroy all cluster1 or cluster2
 - etc..
 
 <img src="Pictures/SystemManagerSMBC.png" alt="NetApp System Manager" width="1100" height="500">
