@@ -148,6 +148,7 @@ if [ "$ms" != "connected" ] ; then
 		sleep 1; time=$(($time + 1))
 		ms=`sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster2 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`
 		echo "Mediator status [$ms] [$time]"
+		[ "$ms" != "connected" ] && (sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster2 -username mediatoradmin -port-number $MEDIATOR_PORT
 	done
 	[ "$ms" != "connected" ] && clean_and_exit "Error Failed to create mediator on clsuter1" 255
 fi
@@ -160,6 +161,7 @@ if [ "$ms" != "connected" ] ; then
 		sleep 1; time=$(($time + 1))
 		ms=`sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster1 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`
 		echo "Mediator status [$ms] [$time]"
+		[ "$ms" != "connected" ] && (sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster1 -username mediatoradmin -port-number $MEDIATOR_PORT
 	done
 	[ "$ms" != "connected" ] && clean_and_exit "Error Failed to create mediator on clsuter1" 255
 fi

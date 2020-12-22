@@ -15,6 +15,7 @@ check_ssh_keyhost(){
 }
 
 check_linux_bin(){
+	which lsof > /dev/null 2>&1 ; [ $? -ne 0 ] && clean_and_exit "Error lsof not available: Please install the pacakge"  255
 	which sshpass > /dev/null 2>&1 ; [ $? -ne 0 ] && clean_and_exit "Error sshpass not available: Please install the pacakge"  255
 	which multipath  > /dev/null 2>&1 ; [ $? -ne 0 ] && clean_and_exit "Error unable to run multipath" 255
 	which rescan-scsi-bus.sh > /dev/null 2>&1  ; [ $? -ne 0 ] && clean_and_exit "Error: rescan-scsi-bus.sh not available" 255
