@@ -1,7 +1,7 @@
 #
 # Functions
 #
-FUNCTIONS_VERSION=0.4
+FUNCTIONS_VERSION=1.0
 
 clean_and_exit(){
 	[ -f "$TMPFILE" ] && rm -f $TMPFILE
