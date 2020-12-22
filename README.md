@@ -1,6 +1,7 @@
-This lab allow you to test NetApp SMBC base on the following lab:
+This lab allow you to test NetApp SMBC (SnapMirror Business Continuity) base on the following lab:
 ------------------------------------------------------------------
-- Lab: https://labondemand.netapp.com/lab/sl10628 
+- Lab on Demand: https://labondemand.netapp.com/lab/sl10628 
+- Doc SMBC: https://docs.netapp.com/us-en/ontap/smbc
 
 Script provide with this demo allow you to build a SnapMirror SMBC LAB
 ----------------------------------------------------------------------
@@ -19,7 +20,7 @@ The following script are avaialbe to build you SMBC configuration from cluster1 
 	- Create a certificate for the Mediator on cluster1 and cluster2
 	- Add a mediator on cluster1 and cluster2
 	- Create a new SAN Lun on a new volume on Cluster1
-	- Create SnapMirror synchronous consistency group replication from this volume to the cluster2 with *AutomatedFailOver* policy
+	- Create SnapMirror synchronous *consistency group* replication from this volume to the cluster2 with *AutomatedFailOver* policy
 	- Map the LUN to the iqn/igroup from cluster1 and cluster2
 	
 - The script **3-Linux-LunDiscover.sh** will automaticall discover all LUN path and will create and LVM Configuration (Logical Volume Manager)and a file system monted on /data.
