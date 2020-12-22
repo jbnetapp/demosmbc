@@ -53,10 +53,17 @@ Run: [grubby --args rdloaddriver=scsi_dh_alua --update-kernel /boot/vmlinuz-3.10
 Reboot Linux now [y/n]? : y
 
 ````
-Used putty to logon with ssh on the linux centos01
+After the linux reboot Used putty to logon again with ssh on the linux centos01 and check if the kernel 
 ````
-IP: 192.168.0.61
+IP: 192.168.0.61 Login root Password: Netapp1! 
 ````
+
+Check that the varaible *rdloaddriver=scsi_dh_alua* has been add into the kernel image file
+````
+[root@centos1 demosmbc]# cat /proc/cmdline
+BOOT_IMAGE=/vmlinuz-3.10.0-1160.6.1.el7.x86_64 root=/dev/mapper/centos-root ro crashkernel=auto spectre_v2=retpoline rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet LANG=en_US.UTF-8 rdloaddriver=scsi_dh_alua
+````
+
 Run the second script that will install NetApp Linux Package *Host utilities kit* and *NetApp Mediator 1.2*. Check that the script return the string **Terminate** with exit code **0** 
 ````
 [root@centos1 demosmbc]# ./1-Install-Linux-NetAppTools.sh
