@@ -22,8 +22,7 @@ The following script are avaialbe to build you SMBC configuration from cluster1 
 	- Create SnapMirror synchronous consistency group replication from this volume to the cluster2 with *AutomatedFailOver* policy
 	- Map the LUN to the iqn/igroup from cluster1 and cluster2
 	
-- The script **3-Linux-LunDiscover.sh**
-	- The script will discover the new LUN and will create a simple LVM configuration on top of the LUN with and ext4 filesystem mounted on /data
+- The script **3-Linux-LunDiscover.sh** will automaticall discover all LUN path and will create and LVM Configuration (Logical Volume Manager)and a file system monted on /data.
 	
 - The script **simpleio.sh** can be used to run IOPs on the LUN (using dd).
 	
