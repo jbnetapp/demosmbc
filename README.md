@@ -1,5 +1,5 @@
-This lab allow you to test NetApp SMBC (SnapMirror Business Continuity) base on the following lab:
-------------------------------------------------------------------
+Build NetApp SMBC (SnapMirror Business Continuity) LAB :
+--------------------------------------------------
 - Lab on Demand: https://labondemand.netapp.com/lab/sl10628 
 - Doc SMBC: https://docs.netapp.com/us-en/ontap/smbc
 
