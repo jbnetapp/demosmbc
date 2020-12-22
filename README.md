@@ -36,9 +36,7 @@ You can reverse all the configuration bye running the script the following scrip
 # Example
 Used putty to logon with ssh on the linux centos01
 ````
-IP: 192.168.0.61
-Login root
-Password: Netapp1! 
+IP: 192.168.0.61 Login root Password: Netapp1! 
 ````
 Use git clone to get all script and required packages
 ````
@@ -56,21 +54,35 @@ Run the first script to check in install yum package and confirm the grub kernel
 Run: [grubby --args rdloaddriver=scsi_dh_alua --update-kernel /boot/vmlinuz-3.10.0-1160.6.1.el7.x86_64] [y/n]? : y
 Reboot Linux now [y/n]? : y
 
-[root@centos1 demosmbc]# ./0-Setup-Linux-iscsi.sh
+````
+Used putty to logon with ssh on the linux centos01
+````
+IP: 192.168.0.61
+````
+Run the second script that will install NetApp Linux Package *Host utilities kit* and *NetApp Mediator 1.2*. Check that the script return the string **Terminate** with exit code **0** 
+````
+[root@centos1 demosmbc]# ./1-Install-Linux-NetAppTools.sh
+...
 ...
 ...
 Terminate
-````
-Run the second script to install NetApp Linux Package *Host utilities kit* and *NetApp Mediator 1.2* 
-````
-[root@centos1 demosmbc]# ./2-Setup-ontapsmbc.sh
-...
-...
-...
-Terminate
+[root@centos1 demosmbc]# echo $?
+0
 ````
 
-Check the Mediator status on both clusters
+
+Run the third script that will create SVM, Mediator, LUN, and SnapMirror SMBC relation between cluster1 and cluster2. Check that the script return the string **Terminate** with exit code **0** 
+````
+[root@centos1 demosmbc]# ./2-Setup-ontapsmbc.sh*
+...
+...
+...
+Terminate
+[root@centos1 demosmbc]# echo $?
+0
+````
+
+Check the Mediator status is **connected** on both clusters
 ````
 [root@centos1 demosmbc]# ./runallcluster snapmirror mediator show
 /usr/bin/sshpass
@@ -96,7 +108,7 @@ Mediator Address Peer Cluster     Connection Status Quorum Status
 192.168.0.61     cluster1         connected         true
 ````
 
-Check SnapMirror and verify if the same Lun has been created on both clusters with same serial number
+Check SnapMirror and verify if the same Lun has been created on both clusters with same serial number *Example Serial is **wOj7N$QPt5OO** *
 ````
 [root@centos1 demosmbc]# ssh -l admin cluster2 snapmirror show
 Access restricted to authorized users
@@ -132,14 +144,15 @@ vserver   path               serial
 SVM_SAN_S /vol/LUN01_S/LUN01 wOj7N$QPt5OO
 ````
 
-Run the script to discover the LUN on Linux and create a ext4 file sytem on LVM using this LUN
+Run the script to discover the LUN on Linux and create a ext4 file sytem on LVM using this LUN.
 ````
 [root@centos1 demosmbc]# ./3-Linux-LunDiscover.sh
 ....
 Terminate
+[root@centos1 demosmbc]# echo $?
+0
 
 ````
-
 Verfiy if you have see the file system on LVM device
 ````
 [root@centos1 demosmbc]# df -h /data
