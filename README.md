@@ -6,7 +6,7 @@ Script provide with this demo allow you to build a SnapMirror SMBC LAB
 ----------------------------------------------------------------------
 Before to start this lab you have to configure each aggregate  on cluster1 and Cluster2 using System Manager 
 - using Menu **STORAGE -> Tieres -> Add Local Tier**
-<img src="Pictures/SystemManagerTiers.png" alt="NetApp System Manager" width="1500" height="650">
+<img src="Pictures/SystemManagerTiers.png" alt="NetApp System Manager" width="1100" height="350">
 
 The following script are avaialbe to build you SMBC configuration from cluster1 and cluster2:
 - The the script **0-Setup-Linux-iscsi.sh** will install all required Linux Packages and will configure kernel variable  it will and reboot the system.
