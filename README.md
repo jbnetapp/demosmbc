@@ -13,7 +13,7 @@ The following scripts are avaialbe from [demosmbc](https://github.com/jbnetapp/d
 - The the script **0-Setup-Linux-iscsi.sh** will install all required Linux Packages and will configure kernel variable  it will and reboot the system.
 - The script **1-Install-Linux-NetAppTools.sh** will automatically  Install **NetApp host utilities kit** and **the NetApp Mediator 1.2** available  the [pkg directory](https://github.com/jbnetapp/demosmbc/tree/main/pkg)   
 - The script **2-Setup-ontapsmbc.sh** will automatically build the full SMBC configuration:
-	- Create Intercluster LIFS on cluster1 and cluster2
+	- Create Intercluster LIFS on cluster1 and cluster2 
 	- Create Cluster peer between cluster1 and cluster2
 	- Create vserver SAN with 4 iscsi DATA LIF on cluster1 and cluster2
 	- Create vserver peer between vserver SAN of cluster1 and cluster2
