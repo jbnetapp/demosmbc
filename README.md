@@ -4,7 +4,7 @@ This lab allow you to test NetApp SMBC base on the following lab:
 
 Script provide with this demo allow you to build a SnapMirror SMBC LAB
 ----------------------------------------------------------------------
-Before to start this lab you have to configure each aggregate  on cluster1 and Cluster2 using System Manager 
+Before to start this lab you **Must** configure aggregates on cluster1 and Cluster2 using System Manager 
 - using Menu **STORAGE -> Tieres -> Add Local Tier**
 <img src="Pictures/SystemManagerTiers.png" alt="NetApp System Manager" width="1100" height="350">
 
