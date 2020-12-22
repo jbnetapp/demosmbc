@@ -17,6 +17,7 @@ fi
 # Main
 check_var 
 check_linux_bin
+check_mediator
 
 echo Init SSH session host 
 check_ssh_keyhost cluster1

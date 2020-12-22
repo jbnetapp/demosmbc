@@ -4,6 +4,7 @@
 FUNCTIONS_VERSION=0.4
 
 clean_and_exit(){
+	[ -f "$TMPFILE" ] && rm -f $TMPFILE
         echo $1 ; [ $2 -ne 0 ] && exit $2
 }
 
@@ -21,6 +22,11 @@ check_linux_bin(){
 
 check_netapp_linux_bin(){
 	which sanlun ; [ $? -ne 0 ] && clean_and_exit "ERROR: sanlun not available" 0
+}
+
+check_mediator() {
+ 	mediator_port=`lsof -n |grep uwsgi |grep TCP |grep $MEDIATOR_PORT | awk '{ print $9}' | uniq`
+	[ "$mediator_port" != "*:${MEDIATOR_PORT}" ] && clean_and_exit "Error Mediator not running or used a bad port number" 255
 }
 
 check_var(){
