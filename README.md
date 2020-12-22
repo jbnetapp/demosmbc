@@ -27,7 +27,7 @@ The following script are avaialbe to build you SMBC configuration from cluster1 
 	
 - The script **simpleio.sh** can be used to run IOPs on the LUN (using dd).
 	
-You can reverse all the configuration bye running the script the following scripts:
+You can reverse all the configuration bye running the following scripts:
 - The first script **Reverse-3-Linux-LunDiscover.sh** will automatically unmap the LUN and will remove all Linux devices and iscsi targets discoverd by the script *3-Linux-LunDiscover.sh*
 - The sceconds script **Reverse-2-Setup-ontapsmbc.sh** will delete all ONTAP LUN and SVM, mediator, certificate etc.. this script **MUST** be run after the script *Reverse-3-Linux-LunDiscover.sh*
 
@@ -38,12 +38,10 @@ Used putty to logon with ssh on the linux centos01
 ````
 IP: 192.168.0.61 Login root Password: Netapp1! 
 ````
-Use git clone to get all script and required packages
+Use git clone to get all scripts and all required packages
 ````
-[root@centos1 ~]# mkdir git
-[root@centos1 ~]# cd git
-[root@centos1 git]# cgit clone https://github.com/jbnetapp/demosmbc
-[root@centos1 git]# cd demosmbc/
+[root@centos1 ~]# git clone https://github.com/jbnetapp/demosmbc
+[root@centos1 ~]# cd demosmbc/
 ````
 
 Run the first script to check in install yum package and confirm the grub kernel update and confirm the linux reboot:
