@@ -64,7 +64,7 @@ Check that the varaible *rdloaddriver=scsi_dh_alua* has been add into the kernel
 BOOT_IMAGE=/vmlinuz-3.10.0-1160.6.1.el7.x86_64 root=/dev/mapper/centos-root ro crashkernel=auto spectre_v2=retpoline rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet LANG=en_US.UTF-8 rdloaddriver=scsi_dh_alua
 ````
 
-Run the second script that will install NetApp Linux Package *Host utilities kit* and *NetApp Mediator 1.2*. Check that the script return the string **Terminate** with exit code **0** 
+Run the second script that will install NetApp Linux Package *Host utilities kit* and *NetApp Mediator 1.2*. Check that the script return the string **Terminate** with exit code **0** :
 ````
 [root@centos1 demosmbc]# ./1-Install-Linux-NetAppTools.sh
 ...
@@ -76,7 +76,7 @@ Terminate
 ````
 
 
-Run the third script that will create SVM, Mediator, LUN, and SnapMirror SMBC relation between cluster1 and cluster2. Check that the script return the string **Terminate** with exit code **0** 
+Run the third script that will create SVM, Mediator, LUN, and SnapMirror SMBC relation between cluster1 and cluster2. Check that the script return the string **Terminate** with exit code **0** :
 ````
 [root@centos1 demosmbc]# ./2-Setup-ontapsmbc.sh*
 ...
@@ -113,7 +113,7 @@ Mediator Address Peer Cluster     Connection Status Quorum Status
 192.168.0.61     cluster1         connected         true
 ````
 
-Check SnapMirror and verify if the same Lun has been created on both clusters with same serial number *Example Serial is **wOj7N$QPt5OO** *
+Check SnapMirror status and chech that the same Lun with same serial number is available on both clusters *Example Serial is **wOj7N$QPt5OO*** :
 ````
 [root@centos1 demosmbc]# ssh -l admin cluster2 snapmirror show
 Access restricted to authorized users
@@ -149,7 +149,7 @@ vserver   path               serial
 SVM_SAN_S /vol/LUN01_S/LUN01 wOj7N$QPt5OO
 ````
 
-Run the script to discover the LUN on Linux and create a ext4 file sytem on LVM using this LUN.
+Run the script to discover the LUN on Linux with all path and LVM (Logical Volume Manager) with a file system ,using this LUN. Check that the script return the string **Terminate** with exit code **0**  :
 ````
 [root@centos1 demosmbc]# ./3-Linux-LunDiscover.sh
 ....
