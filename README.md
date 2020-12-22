@@ -3,7 +3,7 @@ This lab allow you to test NetApp SMBC (SnapMirror Business Continuity) base on 
 - Lab on Demand: https://labondemand.netapp.com/lab/sl10628 
 - Doc SMBC: https://docs.netapp.com/us-en/ontap/smbc
 
-Script provide with this demo allow you to build a SnapMirror SMBC LAB
+Scripts provided with [demosmbc](https://github.com/jbnetapp/demosmbc) allow you to build a complate SnapMirror SMBC Lab on Linux
 ----------------------------------------------------------------------
 Before to start this lab you **Must** configure aggregates on cluster1 and cluster2 using System Manager 
 - Use the Menu **STORAGE -> Tieres -> Add Local Tier** from ONTAP System Manager:
