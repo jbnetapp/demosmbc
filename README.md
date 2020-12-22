@@ -4,7 +4,7 @@ This lab allow you to test NetApp SMBC base on the following lab:
 
 Script provide with this demo allow you to build a SnapMirror SMBC LAB
 ----------------------------------------------------------------------
-Before to start this lab you **Must** configure aggregates on cluster1 and Cluster2 using System Manager 
+Before to start this lab you **Must** configure aggregates on cluster1 and cluster2 using System Manager 
 - using Menu **STORAGE -> Tieres -> Add Local Tier**
 <img src="Pictures/SystemManagerTiers.png" alt="NetApp System Manager" width="1100" height="350">
 
@@ -17,19 +17,21 @@ The following script are avaialbe to build you SMBC configuration from cluster1 
 	- Create vserver SAN with 4 iscsi DATA LIF on cluster1 and cluster2
 	- Create vserver peer between vserver SAN of cluster1 and cluster2
 	- Create a certificate for the Mediator on cluster1 and cluster2
-	- Add a mediator on Cluster1 and Cluster2
+	- Add a mediator on cluster1 and cluster2
 	- Create a new SAN Lun on a new volume on Cluster1
 	- Create SnapMirror synchronous consistency group replication from this volume to the cluster2 with *AutomatedFailOver* policy
 	- Map the LUN to the iqn/igroup from cluster1 and cluster2
 	
 - The script **3-Linux-LunDiscover.sh**
-	- The script will discover the LUN and create a LVM configuration on top of the LUN with and ext4 filesystem
+	- The script will discover the new LUN and will create a simple LVM configuration on top of the LUN with and ext4 filesystem mounted on /data
 	
-you can reverse the configuration bye running the script the following scripts:
+- The script **simpleio.sh** can be used to run IOPs on the LUN (using dd).
+	
+You can reverse all the configuration bye running the script the following scripts:
 - The first script **Reverse-3-Linux-LunDiscover.sh** will automatically unmap the LUN and will remove all Linux devices and iscsi targets discoverd by the script *3-Linux-LunDiscover.sh*
 - The sceconds script **Reverse-2-Setup-ontapsmbc.sh** will delete all ONTAP LUN and SVM, mediator, certificate etc.. this script **MUST** be run after the script *Reverse-3-Linux-LunDiscover.sh*
 
-- All script used the same configuration File **Setup.conf**
+- All scripts used the same configuration File **Setup.conf**
 
 # Example
 Used putty to logon with ssh on the linux centos01
