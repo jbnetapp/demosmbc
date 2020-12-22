@@ -61,7 +61,7 @@ else
 	done
 	[ "$cps" != "pending" ] && clean_and_exit "Error Unable to create cluster peer from cluster1" 255
 	time=0 ; while [ "$cps" != "ok" ] && [ $time -lt $TIMEOUT ]; do
-		(sleep 1; echo $PASSWD ; sleep 2; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster2 cluster peer create -address-family ipv4 -peer-addrs $IP_I1 
+		[ "$cps" != "ok" ] && (sleep 1; echo $PASSWD ; sleep 2; echo $PASSWD )| sshpass -p $PASSWD ssh -l admin cluster2 cluster peer create -address-family ipv4 -peer-addrs $IP_I1 
 		sleep 5; time=$(($time + 5))
 		cps=`sshpass -p $PASSWD ssh -l admin cluster2 cluster peer show |grep cluster1 | awk '{print $4}'|tr -d '\r'`
 		echo "Cluster peer status is [$cps] [$time]"
@@ -91,7 +91,7 @@ sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_
 sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data4 -service-policy default-data-blocks -address $IP_SVM_S5 -netmask-length $LMASK -home-node cluster2-02 -home-port e0g -firewall-policy data
 
 
-echo Create svm relatoin 
+echo Create svm relation 
 sps=`sshpass -p $PASSWD ssh -l admin cluster2 vserver peer show |grep $SVM_NAME_S |awk '{ print $3}'|tr -d '\r'`
 if [ "$sps" != "peered" ]; then
 	sshpass -p $PASSWD ssh -l admin cluster1 vserver peer create -vserver $SVM_NAME_P -peer-vserver $SVM_NAME_S -applications snapmirror -peer-cluster cluster2
@@ -143,12 +143,11 @@ crt=`sshpass -p $PASSWD ssh -l admin cluster2 security certificate show -cert-na
 echo Add the Mediator on cluster1
 ms=`sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster2 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`
 if [ "$ms" != "connected" ] ; then
-	(sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster2 -username mediatoradmin -port-number $MEDIATOR_PORT
 	time=0 ; while [ "$ms" != "connected" ] && [ $time -lt $TIMEOUT ]; do
+		[ "$ms" != "connected" ] && (sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster2 -username mediatoradmin -port-number $MEDIATOR_PORT
 		sleep 1; time=$(($time + 1))
 		ms=`sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster2 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`
 		echo "Mediator status [$ms] [$time]"
-		[ "$ms" != "connected" ] && (sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster1 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster2 -username mediatoradmin -port-number $MEDIATOR_PORT
 	done
 	[ "$ms" != "connected" ] && clean_and_exit "Error Failed to create mediator on clsuter1" 255
 fi
@@ -156,17 +155,16 @@ fi
 echo Add the Mediator on cluster2 
 ms=`sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster1 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`
 if [ "$ms" != "connected" ] ; then
-	(sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster1 -username mediatoradmin -port-number $MEDIATOR_PORT
 	time=0 ; while [ "$ms" != "connected" ] && [ $time -lt $TIMEOUT ]; do
+		[ "$ms" != "connected" ] && (sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster1 -username mediatoradmin -port-number $MEDIATOR_PORT
 		sleep 1; time=$(($time + 1))
 		ms=`sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator show -mediator-address $MEDIATOR_IP -peer-cluster cluster1 |grep $MEDIATOR_IP |awk '{print $3}' | tr -d '\r'`
 		echo "Mediator status [$ms] [$time]"
-		[ "$ms" != "connected" ] && (sleep 1; echo $MEDIATOR_PASSWD; sleep 2; echo $MEDIATOR_PASSWD)| sshpass -p $PASSWD ssh -l admin cluster2 snapmirror mediator add -mediator-address $MEDIATOR_IP -peer-cluster cluster1 -username mediatoradmin -port-number $MEDIATOR_PORT
 	done
 	[ "$ms" != "connected" ] && clean_and_exit "Error Failed to create mediator on clsuter1" 255
 fi
 
-echo Create Consistency group and consistency relatoin 
+echo Create Consistency group and consistency relation 
 sms=`sshpass -p $PASSWD ssh -l admin cluster2 snapmirror show -destination-path $SMBC_DST_PATH -field status |grep $SMBC_DST_PATH |awk '{print $3}'| tr -d '\r'`
 echo Snapmirror Status is [$sms]
 if [ "$sms" != "InSync" ]; then 
