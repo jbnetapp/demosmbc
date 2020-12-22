@@ -20,7 +20,7 @@ The following script are avaialbe to build you SMBC configuration from cluster1 
 	- Add a mediator on Cluster1 and Cluster2
 	- Create a new SAN Lun on a new volume on Cluster1
 	- Create SnapMirror synchronous consistency group replication from this volume to the cluster2 with *AutomatedFailOver* policy
-	- Mapp the LUN to the iqn/igroup from cluster1 and cluster2
+	- Map the LUN to the iqn/igroup from cluster1 and cluster2
 	
 - The script **3-Linux-LunDiscover.sh**
 	- The script will discover the LUN and create a LVM configuration on top of the LUN with and ext4 filesystem
