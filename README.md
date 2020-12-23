@@ -113,7 +113,7 @@ Mediator Address Peer Cluster     Connection Status Quorum Status
 192.168.0.61     cluster1         connected         true
 ````
 
-Check SnapMirror status and chech that the same Lun with same serial number is available on both clusters *Example Serial is **wOj7N$QPt5OO*** :
+Check SnapMirror status and chech that the same Lun with same serial number is available on both clusters *Example Serial is *wOj7N$QPt5OO* :
 ````
 [root@centos1 demosmbc]# ssh -l admin cluster2 snapmirror show
 Access restricted to authorized users
