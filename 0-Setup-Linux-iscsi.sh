@@ -51,7 +51,7 @@ if [ -z "$diff" ]; then
 	cat $TMPFILE > /etc/iscsi/iscsid.conf
 fi
 
-echo > /etc/multipath.conf << EOF
+[ ! -f /etc/multipath.conf ] && echo > /etc/multipath.conf << EOF
 blacklist {
         devnode    "^(ram|raw|loop|fd|md|dm-|sr|scd|st)[0-9]*"
         devnode    "^hd[a-z]"
