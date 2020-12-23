@@ -24,6 +24,22 @@ yum install sshpass -y
 yum install device-mapper -y
 yum install device-mapper-multipath -y
 
+# package require for Mediator
+yum install openssl -y
+yum install openssl-devel -y 
+yum install gcc -y 
+yum install make -y 
+yum install redhat-lsb-core -y 
+yum install patch -y 
+yum install bzip2 -y 
+yum install python36 -y 
+yum install python36-devel -y 
+yum install python36-pip -y
+yum install libselinux-utils -y 
+yum inqtall perl-Data-Dumper -y 
+yum install perl-ExtUtils-MakeMaker -y 
+yum install policycoreutils-python -y
+
 
 tuned-adm profile virtual-guest
 
