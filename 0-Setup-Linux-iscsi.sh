@@ -71,19 +71,24 @@ KERNEL=`uname -r`
 KERNEL_FILE=`echo /boot/vmlinuz-${KERNEL}` 
 if [ -f $KERNEL_FILE ] ; then
 	set +x
-	gettext "Run: [grubby --args "rdloaddriver=scsi_dh_alua" --update-kernel $KERNEL_FILE] [y/n]? : "
-	read input 
-	if [ "$input" == "y" ] ; then
-		grubby --args "rdloaddriver=scsi_dh_alua" --update-kernel $KERNEL_FILE
-		echo "Please Reboot Linux and run following command after reboot"
-		echo "# cat /proc/cmdline "
-		echo "And check if you sse the variable rdloaddriver=scsi_dh_alua in the kernel" 
-	fi
+	input=""; while [ "$input" != "y" ] && [ "$input" != "n" ] ; do
+		gettext "Run: [grubby --args "rdloaddriver=scsi_dh_alua" --update-kernel $KERNEL_FILE] [y/n]? : "
+		read input 
+		if [ "$input" == "y" ] ; then
+			grubby --args "rdloaddriver=scsi_dh_alua" --update-kernel $KERNEL_FILE
+			echo "Please Reboot Linux and run following command after reboot"
+			echo "# cat /proc/cmdline "
+			echo "And check if you sse the variable rdloaddriver=scsi_dh_alua in the kernel" 
+		fi
+	done
 fi
 
-gettext "Reboot Linux now [y/n]? : "
-read input 
-if [ "$input" == "y" ] ; then
-	reboot
-fi
+input=""; while [ "$input" != "y" ] && [ "$input" != "n" ] ; do
+	gettext "Reboot Linux now [y/n]? : "
+	read input 
+	if [ "$input" == "y" ] ; then
+		reboot
+	fi
+done
+
 clean_and_exit "terminate" 0
