@@ -34,7 +34,7 @@ You can reverse all the configuration bye running the following scripts:
 - All scripts used the same configuration File **Setup.conf**
 
 # Example
-Used putty to logon with ssh on the linux centos01
+Use putty to logon with ssh on the linux centos01
 ````
 IP: 192.168.0.61 Login root Password: Netapp1! 
 ````
