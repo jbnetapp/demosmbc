@@ -24,7 +24,7 @@ yum install sshpass -y
 yum install device-mapper -y
 yum install device-mapper-multipath -y
 
-# package require for Mediator
+# packages require for Mediator
 yum install openssl -y
 yum install openssl-devel -y 
 yum install gcc -y 
@@ -40,10 +40,11 @@ yum inqtall perl-Data-Dumper -y
 yum install perl-ExtUtils-MakeMaker -y 
 yum install policycoreutils-python -y
 
-
+# set profile
 tuned-adm profile virtual-guest
 
-cat /etc/iscsi/iscsid.conf |sed s/'node.session.timeo.replacement_timeout = 20'/'node.session.timeo.replacement_timeout = 5'/ > $TMPFILE
+# change session timeo
+cat /etc/iscsi/iscsid.conf | awk '( $1 == "node.session.timeo.replacement_timeout" ) && ($2 == "=") {print $1"= 5"} ( $1 != "node.session.timeo.replacement_timeout" ) {print $0}' > $TMPFILE
 diff=`diff /etc/iscsi/iscsid.conf $TMPFILE`
 if [ -z "$diff" ]; then
 	cp -p /etc/iscsi/iscsid.conf /etc/iscsi/iscsid.conf_bck.$$
