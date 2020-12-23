@@ -68,6 +68,7 @@ fi
 [ -z "$MNT_DATA" ] && clean_and_exit "Internal Error MNT_DATA NULL" 255
 if [ ! -d $MNT_DATA/lost+found ] ; then
 	mkfs.ext4 /dev/vgdata/lv01 ; [ $? -ne 0 ] && clean_and_exit "Error: mkfs failed on /dev/vgdata/lv01" 255
+	[ ! -d "$MNT_DATA" ] && mkdir $MNT_DATA
 	mount /dev/vgdata/lv01 $MNT_DATA
 fi
 
