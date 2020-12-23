@@ -20,6 +20,7 @@ set -x
 yum update -y
 yum install tuned -y
 yum install grubby -y
+yum install sshpass -y
 yum install device-mapper -y
 yum install device-mapper-multipath -y
 
@@ -27,7 +28,12 @@ yum install device-mapper-multipath -y
 tuned-adm profile virtual-guest
 
 cat /etc/iscsi/iscsid.conf |sed s/'node.session.timeo.replacement_timeout = 20'/'node.session.timeo.replacement_timeout = 5'/ > $TMPFILE
-diff /etc/iscsi/iscsid.conf $TMPFILE
+diff=`diff /etc/iscsi/iscsid.conf $TMPFILE`
+if [ -z "$diff" ]; then
+	cp -p /etc/iscsi/iscsid.conf /etc/iscsi/iscsid.conf_bck.$$
+	cat $TMPFILE > /etc/iscsi/iscsid.conf
+fi
+
 echo > /etc/multipath.conf << EOF
 blacklist {
         devnode    "^(ram|raw|loop|fd|md|dm-|sr|scd|st)[0-9]*"
