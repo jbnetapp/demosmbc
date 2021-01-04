@@ -6,7 +6,7 @@ Build NetApp SMBC (SnapMirror Business Continuity) LAB :
 Introduction
 ------------
 Before to start this lab you **Must** configure aggregates on cluster1 and cluster2 using System Manager 
-- Use the Menu **STORAGE -> Tieres -> Add Local Tier** from ONTAP System Manager:
+- Use the Menu **STORAGE -> Tiers -> Add Local Tier** from ONTAP System Manager:
 <img src="Pictures/SystemManagerTiers.png" alt="NetApp System Manager" width="1100" height="350">
 
 The following scripts are avaialbe from [demosmbc](https://github.com/jbnetapp/demosmbc) to automatically build you SMBC configuration between cluster1 and cluster2 from the lab on demande [Lab for ONTAP 9.8](https://labondemand.netapp.com/lab/sl10628):
