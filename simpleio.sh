@@ -24,5 +24,5 @@ while true; do
 	echo Single Read/Write 
 	dd if=${MNT_DATA}/io.file of=${MNT_DATA}/io.file2 bs=1024k iflag=fullblock; date; 
 	echo Single Read 
-	dd if=${MNT_DATA}/io.file of=/dev/zero bs=1024k iflag=fullblock; date; 
+	dd if=${MNT_DATA}/io.file of=/dev/null bs=1024k iflag=fullblock; date; 
 done
