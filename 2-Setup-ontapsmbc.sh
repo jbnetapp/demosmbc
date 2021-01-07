@@ -119,7 +119,7 @@ sshpass -p $PASSWD ssh -l admin cluster2 volume create -volume $VOL_NAME_S -vser
 
 U_SIZE=`echo $SIZE|sed -e s/[0-9]//g`
 N_SIZE=`echo $SIZE|sed -e s/[a-zA-Z]//g`
-LUN_SIZE=$(($N_SIZE - 1))${U_SIZE}
+LUN_SIZE=$(($N_SIZE / 3 * 2 ))${U_SIZE}
 sshpass -p $PASSWD ssh -l admin cluster1 lun create -vserver $SVM_NAME_P -path /vol/${VOL_NAME_P}/${LUN_NAME} -size $LUN_SIZE -ostype Linux -space-reserve disabled
 
 
