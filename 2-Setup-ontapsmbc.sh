@@ -112,10 +112,10 @@ fi
 
 
 
-sshpass -p $PASSWD ssh -l admin cluster1 volume create -volume $VOL_NAME_P -vserver $SVM_NAME_P -aggregate $AGGR_DATA_CL1 -size $SIZE -autosize-mode grow -snapshot-policy none -state online
+sshpass -p $PASSWD ssh -l admin cluster1 volume create -volume $VOL_NAME_P -vserver $SVM_NAME_P -aggregate $AGGR_DATA_CL1 -size $SIZE -autosize-mode grow -snapshot-policy none -space-guarantee none -state online
 sshpass -p $PASSWD ssh -l admin cluster1 volume snapshot autodelete modify -vserver $SVM_NAME_P -volume $VOL_NAME_P -enabled true
 
-sshpass -p $PASSWD ssh -l admin cluster2 volume create -volume $VOL_NAME_S -vserver $SVM_NAME_S -aggregate $AGGR_DATA_CL2 -size $SIZE -autosize-mode grow -snapshot-policy none -type DP -state online 
+sshpass -p $PASSWD ssh -l admin cluster2 volume create -volume $VOL_NAME_S -vserver $SVM_NAME_S -aggregate $AGGR_DATA_CL2 -size $SIZE -autosize-mode grow -snapshot-policy none -space-guarantee none -type DP -state online 
 
 U_SIZE=`echo $SIZE|sed -e s/[0-9]//g`
 N_SIZE=`echo $SIZE|sed -e s/[a-zA-Z]//g`
