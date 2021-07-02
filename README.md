@@ -1,6 +1,6 @@
 Build NetApp SMBC (SnapMirror Business Continuity) LAB :
 --------------------------------------------------
-- Lab on Demand: https://labondemand.netapp.com/lab/sl10628 
+- Lab on Demand Early Adopter Lab for ONTAP 9.9.1 : https://labondemand.netapp.com/lab/sl10658   
 - Doc SMBC: https://docs.netapp.com/us-en/ontap/smbc
 
 Introduction
