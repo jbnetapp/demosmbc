@@ -74,21 +74,21 @@ sshpass -p $PASSWD ssh -l admin cluster2 cluster peer show
 
 echo Create $SVM_NAME_P cluster1
 sshpass -p $PASSWD ssh -l admin cluster1 vserver create -vserver $SVM_NAME_P -subtype default 
-sshpass -p $PASSWD ssh -l admin cluster1 vserver iscsi create -target-alias $SVM_NAME_P -status-admin up
+sshpass -p $PASSWD ssh -l admin cluster1 vserver iscsi create -vserver $SVM_NAME_P -target-alias $SVM_NAME_P -status-admin up
 sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_admin -service-policy default-data-files -address $IP_SVM_P1 -netmask-length $LMASK -home-node cluster1-01 -home-port e0g -firewall-policy mgmt
-sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data1 -service-policy default-data-blocks -address $IP_SVM_P2 -netmask-length $LMASK -home-node cluster1-01 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data2 -service-policy default-data-blocks -address $IP_SVM_P3 -netmask-length $LMASK -home-node cluster1-02 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data3 -service-policy default-data-blocks -address $IP_SVM_P4 -netmask-length $LMASK -home-node cluster1-01 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data4 -service-policy default-data-blocks -address $IP_SVM_P5 -netmask-length $LMASK -home-node cluster1-02 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data1 -service-policy default-data-blocks -address $IP_SVM_P2 -netmask-length $LMASK -home-node cluster1-01 -home-port e0g -firewall-policy data -data-protocol iscsi
+sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data2 -service-policy default-data-blocks -address $IP_SVM_P3 -netmask-length $LMASK -home-node cluster1-02 -home-port e0g -firewall-policy data -data-protocol iscsi
+sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data3 -service-policy default-data-blocks -address $IP_SVM_P4 -netmask-length $LMASK -home-node cluster1-01 -home-port e0g -firewall-policy data -data-protocol iscsi
+sshpass -p $PASSWD ssh -l admin cluster1 network interface create -vserver $SVM_NAME_P -lif ${SVM_NAME_P}_data4 -service-policy default-data-blocks -address $IP_SVM_P5 -netmask-length $LMASK -home-node cluster1-02 -home-port e0g -firewall-policy data -data-protocol iscsi
 
 echo Create $SVM_NAME_S cluster2
 sshpass -p $PASSWD ssh -l admin cluster2 vserver create -vserver $SVM_NAME_S -subtype default 
-sshpass -p $PASSWD ssh -l admin cluster2 vserver iscsi create -target-alias $SVM_NAME_S -status-admin up
+sshpass -p $PASSWD ssh -l admin cluster2 vserver iscsi create -vserver $SVM_NAME_S -target-alias $SVM_NAME_S -status-admin up
 sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_admin -service-policy default-data-files -address $IP_SVM_S1 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy mgmt
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data1 -service-policy default-data-blocks -address $IP_SVM_S2 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data2 -service-policy default-data-blocks -address $IP_SVM_S3 -netmask-length $LMASK -home-node cluster2-02 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data3 -service-policy default-data-blocks -address $IP_SVM_S4 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy data
-sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data4 -service-policy default-data-blocks -address $IP_SVM_S5 -netmask-length $LMASK -home-node cluster2-02 -home-port e0g -firewall-policy data
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data1 -service-policy default-data-blocks -address $IP_SVM_S2 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy data -data-protocol iscsi
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data2 -service-policy default-data-blocks -address $IP_SVM_S3 -netmask-length $LMASK -home-node cluster2-02 -home-port e0g -firewall-policy data -data-protocol iscsi
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data3 -service-policy default-data-blocks -address $IP_SVM_S4 -netmask-length $LMASK -home-node cluster2-01 -home-port e0g -firewall-policy data -data-protocol iscsi
+sshpass -p $PASSWD ssh -l admin cluster2 network interface create -vserver $SVM_NAME_S -lif ${SVM_NAME_S}_data4 -service-policy default-data-blocks -address $IP_SVM_S5 -netmask-length $LMASK -home-node cluster2-02 -home-port e0g -firewall-policy data -data-protocol iscsi
 
 
 echo Create svm relation 
@@ -112,11 +112,14 @@ fi
 
 
 
-sshpass -p $PASSWD ssh -l admin cluster1 volume create -volume $VOL_NAME_P -vserver $SVM_NAME_P -aggregate $AGGR_DATA_CL1 -size $SIZE -autosize-mode grow -state online
-sshpass -p $PASSWD ssh -l admin cluster2 volume create -volume $VOL_NAME_S -vserver $SVM_NAME_S -aggregate $AGGR_DATA_CL2 -size $SIZE -autosize-mode grow -type DP -state online 
+sshpass -p $PASSWD ssh -l admin cluster1 volume create -volume $VOL_NAME_P -vserver $SVM_NAME_P -aggregate $AGGR_DATA_CL1 -size $SIZE -autosize-mode grow -snapshot-policy none -space-guarantee none -state online
+sshpass -p $PASSWD ssh -l admin cluster1 volume snapshot autodelete modify -vserver $SVM_NAME_P -volume $VOL_NAME_P -enabled true
+
+sshpass -p $PASSWD ssh -l admin cluster2 volume create -volume $VOL_NAME_S -vserver $SVM_NAME_S -aggregate $AGGR_DATA_CL2 -size $SIZE -autosize-mode grow -snapshot-policy none -space-guarantee none -type DP -state online 
+
 U_SIZE=`echo $SIZE|sed -e s/[0-9]//g`
 N_SIZE=`echo $SIZE|sed -e s/[a-zA-Z]//g`
-LUN_SIZE=$(($N_SIZE - 1))${U_SIZE}
+LUN_SIZE=$(($N_SIZE / 3 * 2 ))${U_SIZE}
 sshpass -p $PASSWD ssh -l admin cluster1 lun create -vserver $SVM_NAME_P -path /vol/${VOL_NAME_P}/${LUN_NAME} -size $LUN_SIZE -ostype Linux -space-reserve disabled
 
 
