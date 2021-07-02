@@ -198,10 +198,25 @@ SVM_SAN_P                     /vol/LUN01_P/LUN01             /dev/sdd        hos
 SVM_SAN_P                     /vol/LUN01_P/LUN01             /dev/sdb        host65     iSCSI      9g      cDOT
 
 ````
+Create Simple IOPS activity. 
+````
+[root@centos1 demosmbc]# ./simpleio.sh
+Single Write
+2000+0 records in
+2000+0 records out
+2097152000 bytes (2.1 GB) copied, 20.3844 s, 303 MB/s
+Fri Jul  2 16:37:01 UTC 2021
+Single Read/Write
+2000+0 records in
+2000+0 records out
+2097152000 bytes (2.1 GB) copied, 5.21003 s, 403 MB/s
+Fri Jul  2 16:38:54 UTC 2021
+````
+**Remarque**: The two ONTAP clusters are virtual  runing in an hypervisor so we can not expect to have high throughput performance. 
 
 Now you are ready to play with SMBC in real life To demonstrate the SAN LUN residency you could:
 - Put all Data LIF down from primary cluster1 *network interface modify -status-admin down -lif <>*
-- Failover or Reboot or destroy all cluster1 or cluster2
+- Failover or Reboot cluster1 or cluster2 during IO activity  
 - etc..
 <img src="Pictures/SystemManagerSMBC.png" alt="NetApp System Manager" width="1100" height="500">
 
