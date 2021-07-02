@@ -17,7 +17,7 @@ fi
 check_var
 
 set -x
-yum update -y
+#yum update -y
 yum install tuned -y
 yum install grubby -y
 yum install sshpass -y
