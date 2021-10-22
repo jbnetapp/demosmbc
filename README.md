@@ -9,7 +9,7 @@ Before to start this lab you **Must** configure aggregates on cluster1 and clust
 - Use the Menu **STORAGE -> Tiers -> Add Local Tier** from ONTAP System Manager:
 <img src="Pictures/SystemManagerTiers.png" alt="NetApp System Manager" width="1100" height="350">
 
-The following scripts are avaialbe from [demosmbc](https://github.com/jbnetapp/demosmbc) to automatically build you SMBC configuration between cluster1 and cluster2 from the lab on demande [Lab for ONTAP 9.8](https://labondemand.netapp.com/lab/sl10628):
+The following scripts are avaialbe from [demosmbc](https://github.com/jbnetapp/demosmbc) to automatically build you SMBC configuration between cluster1 and cluster2 from the lab on demande [Lab for ONTAP 9.9.1](https://labondemand.netapp.com/lab/sl10658):
 - The the script **0-Setup-Linux-iscsi.sh** will install all required Linux Packages and will configure kernel variable  it will and reboot the system.
 - The script **1-Install-Linux-NetAppTools.sh** will automatically  Install **NetApp host utilities kit** and **the NetApp Mediator 1.2** available  the [pkg directory](https://github.com/jbnetapp/demosmbc/tree/main/pkg)   
 - The script **2-Setup-ontapsmbc.sh** will automatically build the full SMBC configuration:
