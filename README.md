@@ -54,12 +54,12 @@ Run: [grubby --args rdloaddriver=scsi_dh_alua --update-kernel /boot/vmlinuz-3.10
 Reboot Linux now [y/n]? : y
 
 ````
-After the linux reboot Used putty to logon again with ssh on the linux centos01 and check if the kernel 
+After the linux reboot Used putty to logon again with ssh on the linux centos01: 
 ````
 IP: 192.168.0.61 Login root Password: Netapp1! 
 ````
 
-Check that the varaible *rdloaddriver=scsi_dh_alua* has been add into the kernel image file
+Check if that the varaible *rdloaddriver=scsi_dh_alua* has been add into the kernel image file
 ````
 [root@centos1 demosmbc]# cat /proc/cmdline
 BOOT_IMAGE=/vmlinuz-3.10.0-1160.6.1.el7.x86_64 root=/dev/mapper/centos-root ro crashkernel=auto spectre_v2=retpoline rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet LANG=en_US.UTF-8 rdloaddriver=scsi_dh_alua
