@@ -36,7 +36,7 @@ yum install python36 -y
 yum install python36-devel -y 
 yum install python36-pip -y
 yum install libselinux-utils -y 
-yum inqtall perl-Data-Dumper -y 
+yum install perl-Data-Dumper -y 
 yum install perl-ExtUtils-MakeMaker -y 
 yum install policycoreutils-python -y
 
