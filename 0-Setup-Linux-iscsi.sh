@@ -23,6 +23,7 @@ yum install grubby -y
 yum install sshpass -y
 yum install device-mapper -y
 yum install device-mapper-multipath -y
+yum install sg3_utils -y
 
 # packages require for Mediator
 yum install openssl -y
