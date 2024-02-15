@@ -20,7 +20,7 @@ check_var
 
 # Package File
 NETAPP_LINUX_HUK_71_PKG=${DIRNAME}/pkg/netapp_linux_unified_host_utilities-7-1.x86_64.rpm
-NETAPP_MEDIATOR_PKG=${DIRNAME}/pkg/ONTAP-MEDIATOR-1.3
+NETAPP_MEDIATOR_PKG=${DIRNAME}/pkg/ontap-mediator-1.7.0
 
 
 [ ! -f $NETAPP_LINUX_HUK_71_PKG ] && clean_and_exit "Error $NETAPP_LINUX_HUK_71_PKG no such file" 255

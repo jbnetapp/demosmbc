@@ -1,0 +1,37 @@
+set -x
+VERSION=1.0
+DIRNAME=`dirname $0`
+CONFIG_FILE=${DIRNAME}/Setup.conf
+FUNCTIONS_FILE=${DIRNAME}/functions.sh
+
+if [ ! -f $CONFIG_FILE ] ; then
+        echo "ERROR: Unable to read $CONFIG_FILE"
+        exit 1
+fi
+
+. $CONFIG_FILE
+. $FUNCTIONS_FILE
+
+check_var
+
+set -x
+
+[ -z "$1" ]  && clean_and_exit "ERROR: No index specified"
+
+# Gets Free Data Aggregate
+echo Check for data Aggregate on each clusters
+AGGR_DATA_CL1=`sshpass -p $PASSWD ssh -l admin cluster1 aggr show -root false |grep online |sort -k2 -u | tail -1 |awk '{print $1}'|tr -d '\r'`
+[ -z "$AGGR_DATA_CL1" ] && clean_and_exit "ERROR: No Data Aggregate found in cluster1"
+
+AGGR_DATA_CL2=`sshpass -p $PASSWD ssh -l admin cluster2 aggr show -root false |grep online |sort -k2 -u | tail -1 |awk '{print $1}'|tr -d '\r'`
+[ -z "$AGGR_DATA_CL2" ] && clean_and_exit "ERROR: No Data Aggregate found in cluster2"
+
+U_SIZE=`echo $SIZE|sed -e s/[0-9]//g`
+N_SIZE=`echo $SIZE|sed -e s/[a-zA-Z]//g`
+LUN_SIZE=$(($N_SIZE / 3 * 2 ))${U_SIZE}
+
+sshpass -p $PASSWD ssh -l admin cluster1 volume create -volume ${VOL_NAME_P}${1} -vserver $SVM_NAME_P -aggregate $AGGR_DATA_CL1 -size $SIZE -autosize-mode grow -snapshot-policy none -space-guarantee none -state online
+
+sshpass -p $PASSWD ssh -l admin cluster1 lun create -vserver $SVM_NAME_P -path /vol/${VOL_NAME_P}${1}/${LUN_NAME}${1} -size $LUN_SIZE -ostype Linux -space-reserve disabled
+
+sshpass -p $PASSWD ssh -l admin cluster1 consistency-group volume add -vserver $SVM_NAME_P -consistency-group $CG_P -volume ${VOL_NAME_P}${1}

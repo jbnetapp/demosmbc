@@ -5,7 +5,8 @@ FUNCTIONS_VERSION=1.0
 
 clean_and_exit(){
 	[ -f "$TMPFILE" ] && rm -f $TMPFILE
-        echo $1 ; [ $2 -ne 0 ] && exit $2
+        echo $1 ; [ -z "$2" ] && exit 0 
+	[ $2 -ne 0 ] && exit $2
 }
 
 check_ssh_keyhost(){
