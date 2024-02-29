@@ -1,7 +1,9 @@
 #!/bin/bash
 #
+# WARNING: Only for Test purposes 
 # WARNING: SnapMirror AutomatedFailoverDuplex is available as Preview in ONTAP 9.14.1 
 # WARNING: SnapMirror AutomatedFailoverDuplex is not support with Linux
+# WARNING: jerome.blanchet@netapp.com
 #
 set -x
 VERSION=1.0
