@@ -191,7 +191,7 @@ SVM_SAN_P                     /vol/LUN01/LUN01               /dev/sdd        hos
 SVM_SAN_P                     /vol/LUN01/LUN01               /dev/sde        host35     iSCSI      12g     cDOT
 SVM_SAN_P                     /vol/LUN01/LUN01               /dev/sdc        host34     iSCSI      12g     cDOT
 SVM_SAN_P                     /vol/LUN01/LUN01               /dev/sdb        host33     iSCSI      12g     cDOT
-
+````
 
 Run the script to create LVM (Logical Volume Manager) configuration with a file system ,using this LUN. Check that the script return the string **Terminate** with exit code **0**  :
 ````
@@ -202,7 +202,7 @@ Terminate
 0
 
 ````
-Verfiy if you have see the file system on LVM device
+Verfiy file system on LVM device
 ````
 [root@centos1 demosmbc]# df -h /data
 Filesystem               Size  Used Avail Use% Mounted on
