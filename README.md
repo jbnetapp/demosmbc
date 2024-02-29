@@ -228,7 +228,7 @@ Fri Jul  2 16:38:54 UTC 2021
 ````
 **Remarque**: The two ONTAP clusters are virtual  runing in an hypervisor so we can not expect to have high throughput performance. 
 
-Now you are ready to play with SMBC in real life To demonstrate the SAN LUN  transparent application failover so you could:
+Now you are ready to play with SM-BC in real life To demonstrate the SAN LUN  transparent application failover so you could:
 - Put all Data LIF down from primary cluster1 *network interface modify -status-admin down -lif <>*
 - Failover or Reboot cluster1 or cluster2 during IO activity  
 - etc..
